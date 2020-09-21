@@ -1,5 +1,5 @@
 <template>
-  <table v-if="treeData.name">
+  <table v-if="treeData.name" style="width: 100%">
     <tr>
       <td
         :colspan="Array.isArray(treeData.children) ? treeData.children.length * 2 : 1"
@@ -107,14 +107,14 @@ table {
 td {
   position: relative;
   vertical-align: top;
-  padding: 0 0 50px 0;
+  padding: 0 0 30px 0;
   text-align: center;
 }
 
 .extend_handle {
   position: absolute;
   left: 50%;
-  bottom: 30px;
+  bottom: 10px;
   width: 10px;
   height: 10px;
   padding: 10px;
@@ -144,7 +144,7 @@ td {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: 15px;
+  bottom: 0;
   height: 15px;
   border-left: 2px solid #ccc;
   transform: translate3d(-1px, 0, 0);
@@ -209,9 +209,9 @@ td {
 }
 .node .leaf .avatar {
   display: block;
-  width: 4em;
-  height: 4em;
-  border-radius: 2em;
+  width: 3em;
+  height: 3em;
+  border-radius: 1.5em;
   border-width: 2px;
   margin: auto;
   overflow: hidden;
@@ -253,7 +253,7 @@ td {
   position: absolute;
   left: 2em;
   right: 2em;
-  top: 2em;
+  top: 1.5em;
   border-top: 2px solid #ccc;
   z-index: 1;
 }

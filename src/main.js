@@ -2,6 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import "./plugins/element.js";
+import "./plugins/utils.js";
 import i18n from "./i18n";
 import(/* webpackPreload: true */ "typeface-lato/index.css");
 import(/* webpackPreload: true */ "typeface-source-code-pro/index.css");
