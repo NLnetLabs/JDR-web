@@ -20,6 +20,7 @@
     "vue-json-viewer": "^2.2.14",
     "vue-panzoom": "^1.1.2",
     "vue-router": "^3.0.6",
+    "vue-text-middle-ellipsis": "^1.0.13",
     "webpack": "^4.33.0"
   },
   "devDependencies": {

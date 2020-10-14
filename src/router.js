@@ -16,8 +16,8 @@ const router = new Router({
       component: Search
     },
     {
-      path: "/pp",
-      name: "pp",
+      path: "/publicationpoints",
+      name: "publicationpoints",
       component: PublicationPoints
     },
     { path: "*", component: PageNotFound }

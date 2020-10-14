@@ -12,7 +12,7 @@ export default {
   getObject(path) {
     return apiClient.get("/api/v1/object/" + encodeURIComponent(path));
   },
-  getPP() {
+  getPublicationPoints() {
     return apiClient.get("/api/v1/pp");
   }
 };

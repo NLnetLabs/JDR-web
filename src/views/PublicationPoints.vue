@@ -8,7 +8,7 @@
         </span>
         <panZoom :options="{ minZoom: 0.2, maxZoom: 2, bounds: false, boundPadding: 0, beforeWheel }">
           <div>
-            <TreeChart :json="pp.data" />
+            <TreeChart :json="publicationPoints.data" />
           </div>
         </panZoom>
       </div>
@@ -27,12 +27,12 @@ export default {
   data() {
     return {
       loading: false,
-      pp: {}
+      publicationPoints: {}
     };
   },
   created() {
     this.loading = false;
-    this.loadPP();
+    this.loadPublicationPoints();
   },
   methods: {
     beforeWheel: function(e) {
@@ -44,12 +44,12 @@ export default {
       let tree = inputTree;
       const self = this;
       function traverse(node) {
-        node.image_url = self.getNodeImage(node.name);
+        node.image_url = self.getNodeImage(node.name, node.newPubpoint);
 
         let children = node.children;
         if (children && children.length) {
           children.forEach(child => {
-            child.image_url = self.getNodeImage(child.name);
+            child.image_url = self.getNodeImage(child.name, child.newPubpoint);
             if (child.children && child.children.length) {
               traverse(child);
             }
@@ -59,11 +59,11 @@ export default {
       traverse(tree);
       return { data: tree };
     },
-    loadPP: function() {
+    loadPublicationPoints: function() {
       this.loading = true;
-      APIService.getPP().then(response => {
+      APIService.getPublicationPoints().then(response => {
         this.loading = false;
-        this.pp = this.getTreeData(response.data.data);
+        this.publicationPoints = this.getTreeData(response.data.data);
       });
       return false;
     }
@@ -102,13 +102,13 @@ export default {
 .clickable {
   cursor: pointer;
 }
-.container {
-  .el-row {
-    padding: 0.8rem;
-    border-bottom: 1px solid #ebeef5;
-  }
-  .el-row:nth-child(odd) {
-    background-color: #fafafa;
-  }
-}
+// .container {
+//   .el-row {
+//     padding: 0.8rem;
+//     border-bottom: 1px solid #ebeef5;
+//   }
+//   .el-row:nth-child(odd) {
+//     background-color: #fafafa;
+//   }
+// }
 </style>

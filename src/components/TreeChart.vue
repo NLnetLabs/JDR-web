@@ -8,22 +8,68 @@
           extend: Array.isArray(treeData.children) && treeData.children.length && treeData.extend
         }"
       >
-        <div :class="{ node: true, hasMate: treeData.siblings }">
-          <div
-            class="leaf"
-            :class="Array.isArray(treeData.class) ? treeData.class : []"
-            @click="$emit('click-node', treeData)"
-          >
-            <div class="avatar">
-              <img :src="treeData.image_url" />
-            </div>
-            <div class="notification warning" v-if="treeData.warnings">{{ treeData.warnings }}</div>
-            <div class="notification error" v-if="treeData.errors">{{ treeData.errors }}</div>
-            <el-tooltip class="item" effect="dark" :content="treeData.name" placement="right">
-              <div class="name">{{ treeData.name }}</div>
+        <div :class="{ node: true, hasMatez: treeData.siblings }">
+          <div class="leaf" :class="Array.isArray(treeData.class) ? treeData.class : []">
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="treeData.newPubpoint"
+              placement="right"
+              :disabled="treeData.newPubpoint === null"
+            >
+              <div class="avatar" @click="$emit('click-node', treeData)">
+                <img :src="treeData.image_url" />
+              </div>
             </el-tooltip>
+            <!-- <div class="notification warning" v-if="treeData.warnings">{{ treeData.warnings }}</div> -->
+            <!-- <div class="notification error" v-if="treeData.errors">{{ treeData.errors }}</div> -->
+            <el-tooltip class="item" effect="dark" :content="treeData.name" placement="right">
+              <div>
+                <div class="name" @click="$emit('click-node', treeData)">
+                  <div style="width: 8rem">
+                    <div class="notify">
+                      <el-tag size="mini" type="warning" v-if="treeData.warnings">{{
+                        treeData.warnings
+                      }}</el-tag>
+                      <el-tag size="mini" type="error" v-if="treeData.errors">{{
+                        treeData.errors
+                      }}</el-tag>
+                    </div>
+                    <div v-text-middle-ellipsis="4">{{ treeData.name }}</div>
+                  </div>
+                </div>
+              </div>
+            </el-tooltip>
+            <template v-if="Array.isArray(treeData.siblings) && treeData.siblings.length">
+              <div
+                v-for="(mate, mateIndex) in treeData.siblings"
+                :key="treeData.name + mateIndex"
+                :class="Array.isArray(mate.class) ? mate.class : []"
+                @click="$emit('click-node', mate)"
+              >
+                <!-- <div class="notification mate warning" v-if="mate.warnings">{{ mate.warnings }}</div>
+                <div class="notification mate error" v-if="mate.errors">{{ mate.errors }}</div> -->
+                <el-tooltip class="item" effect="dark" :content="mate.name" placement="right">
+                  <div>
+                    <div class="name leafname" @click="$emit('click-node', mate)">
+                      <div style="width: 8rem">
+                        <div class="notify">
+                          <el-tag class="notify" size="mini" type="warning" v-if="mate.warnings">{{
+                            mate.warnings
+                          }}</el-tag>
+                          <el-tag class="notify" size="mini" type="error" v-if="mate.errors">{{
+                            mate.errors
+                          }}</el-tag>
+                        </div>
+                        <div v-text-middle-ellipsis="4">{{ mate.name }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </el-tooltip>
+              </div>
+            </template>
           </div>
-          <template v-if="Array.isArray(treeData.siblings) && treeData.siblings.length">
+          <!-- <template v-if="Array.isArray(treeData.siblings) && treeData.siblings.length">
             <div
               class="leaf"
               v-for="(mate, mateIndex) in treeData.siblings"
@@ -40,7 +86,7 @@
                 <div class="name">{{ mate.name }}</div>
               </el-tooltip>
             </div>
-          </template>
+          </template> -->
         </div>
         <div
           class="extend_handle"
@@ -149,6 +195,9 @@ td {
   border-left: 2px solid #ccc;
   transform: translate3d(-1px, 0, 0);
 }
+.childLevel {
+  padding-bottom: 0 !important;
+}
 .childLevel::before {
   content: "";
   position: absolute;
@@ -204,7 +253,7 @@ td {
   position: relative;
   display: inline-block;
   z-index: 2;
-  width: 6em;
+  width: 10em;
   overflow: hidden;
 }
 .node .leaf .avatar {
@@ -220,7 +269,7 @@ td {
   box-sizing: border-box;
 }
 .notification {
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   border-radius: 1em;
   padding: 0.3em;
@@ -229,14 +278,17 @@ td {
   font-size: 0.7em;
   color: white;
 }
-.notification.mate {
+/* .notification.mate {
   right: 0;
-}
+} */
 .notification.warning {
   background-color: #e6a23c;
 }
 .notification.error {
   background-color: #f56c6c;
+}
+.node .leaf {
+  cursor: pointer;
 }
 .node .leaf .avatar img {
   width: 100%;
@@ -246,7 +298,12 @@ td {
   height: 2em;
   line-height: 2em;
   overflow: hidden;
-  width: 100%;
+  /* width: 100%; */
+  width: 9rem;
+  min-width: 9rem;
+  padding-right: 1rem;
+  white-space: nowrap;
+  padding-left: 0.5rem;
 }
 .node.hasMate::after {
   content: "";
@@ -295,5 +352,12 @@ td {
 .landscape .hasMate .leaf:last-child {
   left: -4em;
   margin-left: 0;
+}
+.leafname {
+  color: #bbb;
+}
+.notify {
+  position: absolute;
+  right: 0;
 }
 </style>

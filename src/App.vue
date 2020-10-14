@@ -10,21 +10,24 @@
               </div>
             </router-link>
           </el-col>
-          <el-col :span="20"><el-menu
-            :router="true"
-            :default-active="activeIndex"
-            mode="horizontal"
-            background-color="#92bd11"
-            text-color="#fff"
-            active-text-color="#fff">
-            <el-menu-item index="0" :route="{ name: 'home'}">
+          <el-col :span="20"
+            ><el-menu
+              :router="true"
+              :default-active="activeIndex"
+              mode="horizontal"
+              background-color="#92bd11"
+              text-color="#fff"
+              active-text-color="#fff"
+            >
+              <el-menu-item index="0" :route="{ name: 'home' }">
                 Search Resources
-            </el-menu-item>
-            <el-menu-item index="1" :route="{ name: 'pp'}">
+              </el-menu-item>
+              <el-menu-item index="1" :route="{ name: 'publicationpoints' }">
                 Publication Points
-            </el-menu-item>
+              </el-menu-item>
             </el-menu>
-            &nbsp;</el-col>
+            &nbsp;</el-col
+          >
         </el-row>
       </el-header>
 
@@ -34,9 +37,7 @@
 
       <el-footer height="40px">
         <el-row>
-          <el-col :span="12">
-            &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs
-          </el-col>
+          <el-col :span="12"> &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs </el-col>
           <el-col :span="12" class="text-right">
             <a href="https://nlnetlabs.nl/services/contracts/" target="_blank">{{
               $t("common.supportcontracts")
@@ -59,9 +60,18 @@ export default {
       activeIndex: "0"
     };
   },
-  created() {
+  watch: {
+    $route(to) {
+      this.activeIndex = this.getActiveIndex(to.name);
+    }
+  },
+  mounted: function() {
+    this.activeIndex = this.getActiveIndex(this.$route.name);
   },
   methods: {
+    getActiveIndex(path) {
+      return "" + (["publicationpoints"].indexOf(path) + 1);
+    }
   }
 };
 </script>
@@ -81,7 +91,6 @@ body {
 
 .el-header {
   background: linear-gradient(45deg, #92bd11, #92bd11);
-  line-height: 60px;
   color: #ffffff;
   z-index: 3;
 }
@@ -133,7 +142,8 @@ a {
   vertical-align: top !important;
 }
 
-.vue-pan-zoom-item:focus, .vue-pan-zoom-scene:focus {
+.vue-pan-zoom-item:focus,
+.vue-pan-zoom-scene:focus {
   outline: none;
 }
 </style>

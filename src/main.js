@@ -13,6 +13,9 @@ Vue.use(JsonViewer)
 import panZoom from 'vue-panzoom'
 Vue.use(panZoom);
 
+import textMiddleEllipsis from 'vue-text-middle-ellipsis';
+Vue.use(textMiddleEllipsis);
+
 Vue.config.productionTip = false;
 
 new Vue({
