@@ -102,13 +102,4 @@ export default {
 .clickable {
   cursor: pointer;
 }
-// .container {
-//   .el-row {
-//     padding: 0.8rem;
-//     border-bottom: 1px solid #ebeef5;
-//   }
-//   .el-row:nth-child(odd) {
-//     background-color: #fafafa;
-//   }
-// }
 </style>

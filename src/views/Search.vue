@@ -21,18 +21,20 @@
 
         <div v-if="tree.length === 0" class="no-results">No results found.</div>
 
+        <el-row>
+          <el-col :span="24" style="overflow: hidden">
+            <panZoom :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }" v-if="treeData">
+              <TreeChart
+                :json="treeData"
+                :selectedRoa="roas[activeTab * 1]"
+                @click-node="clickNode"
+              />
+            </panZoom>
+          </el-col>
+        </el-row>
+
         <el-tabs type="border-card" v-if="roas.length" v-model="activeTab" @tab-click="clickTab">
           <el-tab-pane v-for="(roa, index) in roas" :key="index" :label="'ROA ' + (index + 1)">
-            <el-row>
-              <el-col :span="24" style="overflow: hidden">
-                <panZoom
-                  :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }"
-                  v-if="activeTab === index + ''"
-                >
-                  <TreeChart :json="getTreeData(activeTab)" @click-node="clickNode" />
-                </panZoom>
-              </el-col>
-            </el-row>
             <el-row>
               <el-col :span="24">
                 <div v-if="selectedNode">
@@ -42,108 +44,121 @@
                     class="container"
                     v-if="selectedNode.object.objecttype !== 'ROA' && selectedNode.object.object"
                   >
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        Inherit ASNs
-                      </el-col>
-                      <el-col :span="20">
-                        {{ selectedNode.object.object.inherit_ASNs }}
-                      </el-col>
-                    </el-row>
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        Inherit Prefixes
-                      </el-col>
-                      <el-col :span="20">
-                        {{ selectedNode.object.object.inherit_prefixes }}
-                      </el-col>
-                    </el-row>
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        Manifest
-                      </el-col>
-                      <el-col :span="20">
-                        <a :href="selectedNode.object.object.manifest">{{
-                          selectedNode.object.object.manifest
-                        }}</a>
-                      </el-col>
-                    </el-row>
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        Pubpoint
-                      </el-col>
-                      <el-col :span="20">
-                        <a :href="selectedNode.object.object.pubpoint">{{
-                          selectedNode.object.object.pubpoint
-                        }}</a>
-                      </el-col>
-                    </el-row>
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        RRDP notify
-                      </el-col>
-                      <el-col :span="20">
-                        <a :href="selectedNode.object.object.rrdp_notify">{{
-                          selectedNode.object.object.rrdp_notify
-                        }}</a>
-                      </el-col>
-                    </el-row>
                     <el-row>
-                      <el-col :span="4">
-                        Remarks
-                      </el-col>
-                      <el-col :span="20">
-                        <!-- <el-tag type="info">DEBUG {{ selectedNode.object.remark_counts_me.DBG }}</el-tag> -->
-                        <!-- <el-tag type="success">INFO {{ selectedNode.object.remark_counts_me.INFO }}</el-tag> -->
-                        <el-tag type="warning"
-                          >WARNING {{ selectedNode.object.remark_counts_me.WARN }}</el-tag
-                        >
-                        <el-tag type="danger"
-                          >ERROR {{ selectedNode.object.remark_counts_me.ERR }}</el-tag
-                        >
-                      </el-col>
-                    </el-row>
-                    <el-row>
-                      <el-col :span="4">
-                        Remarks children
-                      </el-col>
-                      <el-col :span="20">
-                        <!-- <el-tag type="info">DEBUG {{ selectedNode.object.remark_counts_children.DBG }}</el-tag> -->
-                        <!-- <el-tag type="success">INFO {{ selectedNode.object.remark_counts_children.INFO }}</el-tag> -->
-                        <el-tag type="warning"
-                          >WARNING {{ selectedNode.object.remark_counts_children.WARN }}</el-tag
-                        >
-                        <el-tag type="danger"
-                          >ERROR {{ selectedNode.object.remark_counts_children.ERR }}</el-tag
-                        >
-                      </el-col>
-                    </el-row>
-                    <el-row>
-                      <el-col :span="4">
-                        Raw object
-                      </el-col>
-                      <el-col :span="20">
-                        <el-tree
-                          class="filter-tree"
-                          :data="objectTree"
-                          :props="defaultProps"
-                          default-expand-all
-                          ref="tree"
-                          v-if="objectTree"
-                        >
-                          <span class="custom-tree-node" slot-scope="{ node, data }">
-                            <span v-if="data.nicename"
-                              >{{ data.nicename }} <span class="tagname">{{ data.tag }}</span></span
+                      <el-col :span="12">
+                        <el-row v-if="selectedNode.object.objecttype === 'CER'">
+                          <el-col :span="4">
+                            Inherit ASNs
+                          </el-col>
+                          <el-col :span="20">
+                            {{ selectedNode.object.object.inherit_ASNs }}
+                          </el-col>
+                        </el-row>
+                        <el-row v-if="selectedNode.object.objecttype === 'CER'">
+                          <el-col :span="4">
+                            Inherit Prefixes
+                          </el-col>
+                          <el-col :span="20">
+                            {{ selectedNode.object.object.inherit_prefixes }}
+                          </el-col>
+                        </el-row>
+                        <el-row v-if="selectedNode.object.objecttype === 'CER'">
+                          <el-col :span="4">
+                            Manifest
+                          </el-col>
+                          <el-col :span="20">
+                            <a :href="selectedNode.object.object.manifest">{{
+                              selectedNode.object.object.manifest
+                            }}</a>
+                          </el-col>
+                        </el-row>
+                        <el-row v-if="selectedNode.object.objecttype === 'CER'">
+                          <el-col :span="4">
+                            Pubpoint
+                          </el-col>
+                          <el-col :span="20">
+                            <a :href="selectedNode.object.object.pubpoint">{{
+                              selectedNode.object.object.pubpoint
+                            }}</a>
+                          </el-col>
+                        </el-row>
+                        <el-row v-if="selectedNode.object.objecttype === 'CER'">
+                          <el-col :span="4">
+                            RRDP notify
+                          </el-col>
+                          <el-col :span="20">
+                            <a :href="selectedNode.object.object.rrdp_notify">{{
+                              selectedNode.object.object.rrdp_notify
+                            }}</a>
+                          </el-col>
+                        </el-row>
+                        <el-row>
+                          <el-col :span="4">
+                            Remarks
+                          </el-col>
+                          <el-col :span="20">
+                            <!-- <el-tag type="info">DEBUG {{ selectedNode.object.remark_counts_me.DBG }}</el-tag> -->
+                            <!-- <el-tag type="success">INFO {{ selectedNode.object.remark_counts_me.INFO }}</el-tag> -->
+                            <el-tag type="warning"
+                              >WARNING {{ selectedNode.object.remark_counts_me.WARN }}</el-tag
                             >
-                            <span v-if="!data.nicename" class="name">{{ data.tag }}</span>
-                            <strong v-if="data.nicevalue">&nbsp;&nbsp;{{ data.nicevalue }}</strong>
-                            &nbsp;&nbsp;
-                            <span v-for="(remark, index) in data.remarks" :key="index">
-                              <el-tag size="mini" type="warning" v-if="remark.lvl === 'WARN'">{{remark.msg}}</el-tag>  
-                              <el-tag size="mini" type="error" v-if="remark.lvl === 'ERROR'">{{remark.msg}}</el-tag>  
-                            </span>
-                          </span>
-                        </el-tree>
+                            <el-tag type="danger"
+                              >ERROR {{ selectedNode.object.remark_counts_me.ERR }}</el-tag
+                            >
+                          </el-col>
+                        </el-row>
+                        <el-row>
+                          <el-col :span="4">
+                            Remarks children
+                          </el-col>
+                          <el-col :span="20">
+                            <!-- <el-tag type="info">DEBUG {{ selectedNode.object.remark_counts_children.DBG }}</el-tag> -->
+                            <!-- <el-tag type="success">INFO {{ selectedNode.object.remark_counts_children.INFO }}</el-tag> -->
+                            <el-tag type="warning"
+                              >WARNING {{ selectedNode.object.remark_counts_children.WARN }}</el-tag
+                            >
+                            <el-tag type="danger"
+                              >ERROR {{ selectedNode.object.remark_counts_children.ERR }}</el-tag
+                            >
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-row>
+                          <el-col :span="4">
+                            Raw object
+                          </el-col>
+                          <el-col :span="20">
+                            <el-tree
+                              class="filter-tree"
+                              :data="objectTree"
+                              :props="defaultProps"
+                              default-expand-all
+                              ref="tree"
+                              v-if="objectTree"
+                            >
+                              <span class="custom-tree-node" slot-scope="{ node, data }">
+                                <span v-if="data.nicename"
+                                  >{{ data.nicename }}
+                                  <span class="tagname">{{ data.tag }}</span></span
+                                >
+                                <span v-if="!data.nicename" class="name">{{ data.tag }}</span>
+                                <strong v-if="data.nicevalue"
+                                  >&nbsp;&nbsp;{{ data.nicevalue }}</strong
+                                >
+                                &nbsp;&nbsp;
+                                <span v-for="(remark, index) in data.remarks" :key="index">
+                                  <el-tag size="mini" type="warning" v-if="remark.lvl === 'WARN'">{{
+                                    remark.msg
+                                  }}</el-tag>
+                                  <el-tag size="mini" type="error" v-if="remark.lvl === 'ERROR'">{{
+                                    remark.msg
+                                  }}</el-tag>
+                                </span>
+                              </span>
+                            </el-tree>
+                          </el-col>
+                        </el-row>
                       </el-col>
                     </el-row>
                   </div>
@@ -152,76 +167,90 @@
                     class="container"
                     v-if="selectedNode.objecttype === 'ROA' && selectedNode.object"
                   >
-
-                  <el-row>
-                    <el-col :span="12">
-                      <el-row>
-                        <el-col :span="4">
-                          <strong>ASN</strong>
-                        </el-col>
-                        <el-col :span="20">
-                          {{ selectedNode.object.asid }}
-                        </el-col>
-                      </el-row>
-                      <el-row align="middle">
-                        <el-col :span="4">
-                          <strong>VRPS</strong>
-                        </el-col>
-                        <el-col :span="20">
-                          <el-table size="small" :data="selectedNode.object.vrps" style="width: 100%" height="220">
-                            <el-table-column label="Prefix"><template slot-scope="scope">{{ scope.row.prefix }}-{{scope.row.maxlength}}</template></el-table-column>
-                          </el-table>
-                        </el-col>
-                      </el-row>
-                      <el-row align="middle">
-                        <el-col :span="4">
-                          <strong>Remarks</strong>
-                        </el-col>
-                        <el-col :span="20">
-                          <!-- <el-tag type="info">DEBUG {{ selectedNode.remark_counts_me.DBG }}</el-tag>
-                          <el-tag type="success">INFO {{ selectedNode.remark_counts_me.INFO }}</el-tag> -->
-                          <el-tag type="warning"
-                            >WARNING {{ selectedNode.remark_counts_me.WARN }}</el-tag
-                          >
-                          <el-tag type="danger">ERROR {{ selectedNode.remark_counts_me.ERR }}</el-tag>
-                        </el-col>
-                      </el-row>
-                    </el-col>
-                    <el-col :span="12">
                     <el-row>
-                      <el-col :span="4">
-                        <strong>Raw object</strong>
-                      </el-col>
-                      <el-col :span="20">
-                        <el-tree
-                          class="filter-tree"
-                          :data="objectTree"
-                          :props="defaultProps"
-                          default-expand-all
-                          ref="tree"
-                          v-if="objectTree"
-                          style="max-height: 300px; overflow-y:auto"
-                        >
-                          <span class="custom-tree-node" slot-scope="{ node, data }">
-                            <span v-if="data.nicename"
-                              >{{ data.nicename }} <span class="tagname">{{ data.tag }}</span></span
+                      <el-col :span="12">
+                        <el-row>
+                          <el-col :span="4">
+                            <strong>ASN</strong>
+                          </el-col>
+                          <el-col :span="20">
+                            {{ selectedNode.object.asid }}
+                          </el-col>
+                        </el-row>
+                        <el-row align="middle">
+                          <el-col :span="4">
+                            <strong>VRPS</strong>
+                          </el-col>
+                          <el-col :span="20">
+                            <el-table
+                              size="small"
+                              :data="selectedNode.object.vrps"
+                              style="width: 100%"
+                              height="220"
                             >
-                            <span v-if="!data.nicename" class="name">{{ data.tag }}</span>
-                            <strong v-if="data.nicevalue">&nbsp;&nbsp;{{ data.nicevalue }}</strong>
-                            &nbsp;&nbsp;
-                            <span v-for="(remark, index) in data.remarks" :key="index">
-                              <el-tag size="mini" type="warning" v-if="remark.lvl === 'WARN'">{{remark.msg}}</el-tag>  
-                              <el-tag size="mini" type="error" v-if="remark.lvl === 'ERROR'">{{remark.msg}}</el-tag>  
-                            </span>
-                          </span>
-                        </el-tree>
+                              <el-table-column label="Prefix"
+                                ><template slot-scope="scope"
+                                  >{{ scope.row.prefix }}-{{ scope.row.maxlength }}</template
+                                ></el-table-column
+                              >
+                            </el-table>
+                          </el-col>
+                        </el-row>
+                        <el-row align="middle">
+                          <el-col :span="4">
+                            <strong>Remarks</strong>
+                          </el-col>
+                          <el-col :span="20">
+                            <!-- <el-tag type="info">DEBUG {{ selectedNode.remark_counts_me.DBG }}</el-tag>
+                          <el-tag type="success">INFO {{ selectedNode.remark_counts_me.INFO }}</el-tag> -->
+                            <el-tag type="warning"
+                              >WARNING {{ selectedNode.remark_counts_me.WARN }}</el-tag
+                            >
+                            <el-tag type="danger"
+                              >ERROR {{ selectedNode.remark_counts_me.ERR }}</el-tag
+                            >
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-row>
+                          <el-col :span="4">
+                            <strong>Raw object</strong>
+                          </el-col>
+                          <el-col :span="20">
+                            <el-tree
+                              class="filter-tree"
+                              :data="objectTree"
+                              :props="defaultProps"
+                              default-expand-all
+                              ref="tree"
+                              v-if="objectTree"
+                              style="max-height: 300px; overflow-y:auto"
+                            >
+                              <span class="custom-tree-node" slot-scope="{ node, data }">
+                                <span v-if="data.nicename"
+                                  >{{ data.nicename }}
+                                  <span class="tagname">{{ data.tag }}</span></span
+                                >
+                                <span v-if="!data.nicename" class="name">{{ data.tag }}</span>
+                                <strong v-if="data.nicevalue"
+                                  >&nbsp;&nbsp;{{ data.nicevalue }}</strong
+                                >
+                                &nbsp;&nbsp;
+                                <span v-for="(remark, index) in data.remarks" :key="index">
+                                  <el-tag size="mini" type="warning" v-if="remark.lvl === 'WARN'">{{
+                                    remark.msg
+                                  }}</el-tag>
+                                  <el-tag size="mini" type="error" v-if="remark.lvl === 'ERROR'">{{
+                                    remark.msg
+                                  }}</el-tag>
+                                </span>
+                              </span>
+                            </el-tree>
+                          </el-col>
+                        </el-row>
                       </el-col>
                     </el-row>
-                    </el-col>
-                  </el-row>
-
-                    
-                    
                   </div>
                 </div>
               </el-col>
@@ -254,7 +283,8 @@ export default {
       defaultProps: {
         children: "children",
         label: "tag"
-      }
+      },
+      treeData: null
     };
   },
   computed: {
@@ -306,7 +336,12 @@ export default {
       if (node.object.objecttype !== "ROA") {
         this.selectedNode = node;
       } else {
-        this.selectedNode = this.roas[this.activeTab * 1];
+        this.roas.forEach((r, i) => {
+          if (node.object && r.name === node.object.name) {
+            this.activeTab = i + "";
+            this.clickTab();
+          }
+        });
       }
       APIService.getObject(node.object.filename).then(response => {
         this.currentObject = response.data;
@@ -314,6 +349,7 @@ export default {
     },
     clickTab() {
       this.selectedNode = this.roas[this.activeTab * 1];
+      this.treeData = this.getTreeData(this.activeTab);
     },
     getTreeData(index) {
       let tree = this.tree;
@@ -373,6 +409,7 @@ export default {
         self.tree = response.data.data;
         if (!self.selectedNode) {
           self.selectedNode = self.roas[0];
+          self.treeData = self.getTreeData(0);
         }
         APIService.getObject(self.selectedNode.filename).then(response => {
           self.currentObject = response.data;
@@ -441,11 +478,6 @@ h4 {
   font-size: 0.9rem;
   .el-row {
     padding: 0.8rem;
-    // border-bottom: 1px solid #ebeef5;
-    // background-color: #fff;
-  }
-  .el-row:nth-child(odd) {
-    // background-color: #fff!important;
   }
 }
 .no-results {
