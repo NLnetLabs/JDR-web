@@ -265,6 +265,7 @@
 import TreeChart from "@/components/TreeChart";
 import APIService from "@/services/APIService.js";
 const isIp = require("is-ip");
+const cidrRegex = require("cidr-regex");
 
 export default {
   components: {
@@ -425,7 +426,7 @@ export default {
         }
       }
 
-      if (isIp(search)) {
+      if (isIp(search) || cidrRegex({ exact: true }).test(search)) {
         APIService.getPrefix(search).then(response => {
           selectNode(response);
         });
