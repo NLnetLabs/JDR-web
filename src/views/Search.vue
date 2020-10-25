@@ -272,6 +272,7 @@ import TreeChart from "@/components/TreeChart";
 import APIService from "@/services/APIService.js";
 const isIp = require("is-ip");
 const cidrRegex = require("cidr-regex");
+import router from "@/router";
 
 const SEARCH_TYPES = {
   PREFIX: "prefix",
@@ -287,7 +288,7 @@ export default {
     return {
       loading: false,
       tree: {},
-      search: "",
+      search: this.$route.params.search,
       searched: "",
       error: "",
       selectedNode: null,
@@ -333,10 +334,17 @@ export default {
   created() {
     window.addEventListener("beforeunload", this.beforeUnload);
     this.loading = false;
-    if (localStorage.getItem("jdr_last_search")) {
+    if (this.search) {
+      this.doSearch(this.search);
+    } else if (localStorage.getItem("jdr_last_search")) {
       this.search = localStorage.getItem("jdr_last_search");
       this.doSearch(this.search);
     }
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.search = to.params.search;
+    this.doSearch(this.search);
+    next();
   },
   methods: {
     beforeUnload() {
@@ -460,6 +468,9 @@ export default {
     },
     searchResource() {
       this.loading = true;
+      if (this.$route.params.search !== this.search) {
+        router.push("/" + this.search);
+      }
       localStorage.setItem("jdr_last_search", this.search);
       this.doSearch(this.search);
     }
