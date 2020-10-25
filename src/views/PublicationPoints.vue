@@ -6,9 +6,11 @@
           <i class="el-icon-loading"></i>
           Searching...
         </span>
-        <panZoom :options="{ minZoom: 0.2, maxZoom: 2, bounds: false, boundPadding: 0, beforeWheel }">
+        <panZoom
+          :options="{ minZoom: 0.2, maxZoom: 2, bounds: false, boundPadding: 0, beforeWheel }"
+        >
           <div>
-            <TreeChart :json="publicationPoints.data" />
+            <TreeChart :json="publicationPoints.data" @click-node="clickNode" />
           </div>
         </panZoom>
       </div>
@@ -19,6 +21,7 @@
 <script>
 import TreeChart from "@/components/TreeChart";
 import APIService from "@/services/APIService.js";
+import router from "@/router";
 
 export default {
   components: {
@@ -66,6 +69,9 @@ export default {
         this.publicationPoints = this.getTreeData(response.data.data);
       });
       return false;
+    },
+    clickNode(node) {
+      router.push("/search/" + encodeURIComponent(node.object.filename));
     }
   }
 };

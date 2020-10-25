@@ -11,8 +11,13 @@ Vue.use(Router);
 const router = new Router({
   routes: [
     {
-      path: "/:search?",
+      path: "/",
       name: "home",
+      component: Search
+    },
+    {
+      path: "/search/:search",
+      name: "search",
       component: Search
     },
     {

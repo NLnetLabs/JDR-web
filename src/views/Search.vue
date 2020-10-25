@@ -469,7 +469,7 @@ export default {
     searchResource() {
       this.loading = true;
       if (this.$route.params.search !== this.search) {
-        router.push("/" + this.search);
+        router.push("/search/" + this.search);
       }
       localStorage.setItem("jdr_last_search", this.search);
       this.doSearch(this.search);
