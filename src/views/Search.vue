@@ -18,11 +18,17 @@
           Searching...
         </div>
 
-        <div v-if="tree.length === 0" class="no-results">No results found.</div>
+        <div v-if="tree.length === 0" class="no-results">
+          No results found for <span v-text="searchType"></span>&nbsp;
+          <strong><span v-text="searched"></span></strong>
+        </div>
 
         <el-row>
           <el-col :span="24" style="overflow: hidden">
-            <panZoom :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }" v-if="treeData !== null && treeData.name">
+            <panZoom
+              :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }"
+              v-if="treeData !== null && treeData.name"
+            >
               <TreeChart
                 :json="treeData"
                 :selectedRoa="roas[activeTab * 1]"
@@ -267,6 +273,12 @@ import APIService from "@/services/APIService.js";
 const isIp = require("is-ip");
 const cidrRegex = require("cidr-regex");
 
+const SEARCH_TYPES = {
+  PREFIX: "prefix",
+  ASN: "asn",
+  FILENAME: "filename"
+};
+
 export default {
   components: {
     TreeChart
@@ -276,6 +288,7 @@ export default {
       loading: false,
       tree: {},
       search: "",
+      searched: "",
       error: "",
       selectedNode: null,
       activeTab: "0",
@@ -284,7 +297,8 @@ export default {
         children: "children",
         label: "tag"
       },
-      treeData: null
+      treeData: null,
+      searchType: null
     };
   },
   computed: {
@@ -425,30 +439,22 @@ export default {
           });
         }
       }
-
+      this.searched = search;
       if (isIp(search) || cidrRegex({ exact: true }).test(search)) {
+        this.searchType = SEARCH_TYPES.PREFIX;
         APIService.getPrefix(search).then(response => {
           selectNode(response);
         });
+      } else if (search && search.toLowerCase().indexOf("as") === 0) {
+        this.searchType = SEARCH_TYPES.ASN;
+        APIService.getASN(search).then(response => {
+          selectNode(response);
+        });
       } else {
-        if (search && search.toLowerCase().indexOf("as") === 0) {
-          search = search.substr(2) * 1;
-        }
-        if (search >= 0 && search <= 4294967295) {
-          APIService.getASN(search).then(response => {
-            if (response.data.data && response.data.data.name) {
-              selectNode(response);
-            } else {
-              APIService.getFilename(search).then(response => {
-                selectNode(response);
-              });
-            }
-          });
-        } else {
-          APIService.getFilename(search).then(response => {
-            selectNode(response);
-          });
-        }
+        this.searchType = SEARCH_TYPES.FILENAME;
+        APIService.getFilename(search).then(response => {
+          selectNode(response);
+        });
       }
       return false;
     },
