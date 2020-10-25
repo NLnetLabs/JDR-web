@@ -30,6 +30,8 @@ export default {
   data() {
     return {
       loading: false,
+      rawPublicationPoints: null,
+      rawPublicationPointsStatus: null,
       publicationPoints: {}
     };
   },
@@ -43,16 +45,40 @@ export default {
       var shouldIgnore = !e.altKey;
       return shouldIgnore;
     },
-    getTreeData: function(inputTree) {
-      let tree = inputTree;
+    getStatusError(name) {
+      return this.rawPublicationPointsStatus[name].ping4.global_alert
+        ? "v4"
+        : "" + "" + this.rawPublicationPointsStatus[name].ping6.global_alert
+        ? "v6"
+        : "";
+    },
+    getTreeData() {
+      let tree = this.rawPublicationPoints;
       const self = this;
       function traverse(node) {
         node.image_url = self.getNodeImage(node.name, node.newPubpoint);
-
+        if (self.rawPublicationPointsStatus) {
+          if (self.rawPublicationPointsStatus[node.name]) {
+            node.additionalInfo = self.getStatusError(node.name);
+          } else {
+            node.additionalInfo = "?";
+          }
+        }
+        node.warnings = node.object ? node.object.remark_counts_me.WARN : 0;
+        node.errors = node.object ? node.object.remark_counts_me.ERROR : 0;
         let children = node.children;
         if (children && children.length) {
           children.forEach(child => {
             child.image_url = self.getNodeImage(child.name, child.newPubpoint);
+            if (self.rawPublicationPointsStatus) {
+              if (self.rawPublicationPointsStatus[child.name]) {
+                child.additionalInfo = self.getStatusError(child.name);
+              } else {
+                child.additionalInfo = "?";
+              }
+            }
+            child.warnings = child.object ? child.object.remark_counts_me.WARN : 0;
+            child.errors = child.object ? child.object.remark_counts_me.ERROR : 0;
             if (child.children && child.children.length) {
               traverse(child);
             }
@@ -62,12 +88,17 @@ export default {
       traverse(tree);
       return { data: tree };
     },
-    loadPublicationPoints: function() {
+    loadPublicationPoints() {
       this.loading = true;
-      APIService.getPublicationPoints().then(response => {
-        this.loading = false;
-        this.publicationPoints = this.getTreeData(response.data.data);
+      APIService.getPublicationPointsStatus().then(response => {
+        this.rawPublicationPointsStatus = response.data.data;
+        APIService.getPublicationPoints().then(response => {
+          this.loading = false;
+          this.rawPublicationPoints = response.data.data;
+          this.publicationPoints = this.getTreeData();
+        });
       });
+
       return false;
     },
     clickNode(node) {

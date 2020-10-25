@@ -156,7 +156,7 @@
                               <el-tag size="mini" type="warning" v-if="remark.lvl === 'WARN'">{{
                                 remark.msg
                               }}</el-tag>
-                              <el-tag size="mini" type="error" v-if="remark.lvl === 'ERROR'">{{
+                              <el-tag size="mini" type="danger" v-if="remark.lvl === 'ERROR'">{{
                                 remark.msg
                               }}</el-tag>
                             </span>
@@ -241,7 +241,7 @@
                               <el-tag size="mini" type="warning" v-if="remark.lvl === 'WARN'">{{
                                 remark.msg
                               }}</el-tag>
-                              <el-tag size="mini" type="error" v-if="remark.lvl === 'ERROR'">{{
+                              <el-tag size="mini" type="danger" v-if="remark.lvl === 'ERROR'">{{
                                 remark.msg
                               }}</el-tag>
                             </span>

@@ -17,5 +17,8 @@ export default {
   },
   getPublicationPoints() {
     return apiClient.get("/api/v1/pp");
+  },
+  getPublicationPointsStatus() {
+    return apiClient.get("/api/v1/ppstatus");
   }
 };
