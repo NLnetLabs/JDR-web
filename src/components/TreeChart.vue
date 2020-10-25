@@ -27,23 +27,18 @@
                   <div class="name-container">
                     <el-row>
                       <el-col :span="2">&nbsp;</el-col>
-                      <el-col :span="20"><div v-text-middle-ellipsis="4">{{ treeData.name }}</div></el-col>
-                      <el-col :span="2">&nbsp;<el-tag size="mini" type="warning" v-if="treeData.warnings">{{
-                        treeData.warnings
-                      }}</el-tag>
-                      <el-tag size="mini" type="error" v-if="treeData.errors">{{
-                        treeData.errors
-                      }}</el-tag></el-col>
+                      <el-col :span="20"
+                        ><div v-text-middle-ellipsis="4">{{ treeData.name }}</div></el-col
+                      >
+                      <el-col :span="2"
+                        >&nbsp;<el-tag size="mini" type="warning" v-if="treeData.warnings">{{
+                          treeData.warnings
+                        }}</el-tag>
+                        <el-tag size="mini" type="error" v-if="treeData.errors">{{
+                          treeData.errors
+                        }}</el-tag></el-col
+                      >
                     </el-row>
-                    <!-- <div class="notify">
-                      <el-tag size="mini" type="warning" v-if="treeData.warnings">{{
-                        treeData.warnings
-                      }}</el-tag>
-                      <el-tag size="mini" type="error" v-if="treeData.errors">{{
-                        treeData.errors
-                      }}</el-tag>
-                    </div> -->
-                    <!-- <div v-text-middle-ellipsis="4">{{ treeData.name }}</div> -->
                   </div>
                 </div>
               </div>
@@ -60,24 +55,19 @@
                     <div class="name leafname" @click="$emit('click-node', mate)">
                       <div class="name-container">
                         <el-row>
-                      <el-col :span="2">&nbsp;</el-col>
-                      <el-col :span="20"><div v-text-middle-ellipsis="4">{{ mate.name }}</div></el-col>
-                      <el-col :span="2">&nbsp;<el-tag size="mini" type="warning" v-if="mate.warnings">{{
-                        mate.warnings
-                      }}</el-tag>
-                      <el-tag size="mini" type="error" v-if="mate.errors">{{
-                        mate.errors
-                      }}</el-tag></el-col>
-                    </el-row>
-                        <!-- <div class="notify">
-                          <el-tag class="notify" size="mini" type="warning" v-if="mate.warnings">{{
-                            mate.warnings
-                          }}</el-tag>
-                          <el-tag class="notify" size="mini" type="error" v-if="mate.errors">{{
-                            mate.errors
-                          }}</el-tag>
-                        </div> -->
-                        <!-- <div v-text-middle-ellipsis="4">{{ mate.name }}</div> -->
+                          <el-col :span="2">&nbsp;</el-col>
+                          <el-col :span="20"
+                            ><div v-text-middle-ellipsis="4">{{ mate.name }}</div></el-col
+                          >
+                          <el-col :span="2"
+                            >&nbsp;<el-tag size="mini" type="warning" v-if="mate.warnings">{{
+                              mate.warnings
+                            }}</el-tag>
+                            <el-tag size="mini" type="error" v-if="mate.errors">{{
+                              mate.errors
+                            }}</el-tag></el-col
+                          >
+                        </el-row>
                       </div>
                     </div>
                   </div>
@@ -229,7 +219,8 @@ td {
     border-top: 2px solid #ccc;
   }
 
-  &:first-child:before, &:last-child:before {
+  &:first-child:before,
+  &:last-child:before {
     display: none;
   }
 
