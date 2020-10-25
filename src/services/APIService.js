@@ -9,6 +9,9 @@ export default {
   getASN(asn) {
     return apiClient.get("/api/v1/asn/" + asn);
   },
+  getFilename(filename) {
+    return apiClient.get("/api/v1/filename/" + filename);
+  },
   getObject(path) {
     return apiClient.get("/api/v1/object/" + encodeURIComponent(path));
   },

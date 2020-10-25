@@ -7,7 +7,6 @@
             placeholder="Search prefix or AS number"
             prefix-icon="el-icon-search"
             v-model="search"
-            @keyup.enter.native="searchResource"
             clearable
           ></el-input>
         </el-form-item>
@@ -23,7 +22,7 @@
 
         <el-row>
           <el-col :span="24" style="overflow: hidden">
-            <panZoom :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }" v-if="treeData">
+            <panZoom :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }" v-if="treeData !== null && treeData.name">
               <TreeChart
                 :json="treeData"
                 :selectedRoa="roas[activeTab * 1]"
@@ -356,47 +355,49 @@ export default {
       const roas = this.roas;
       const self = this;
       function traverse(node) {
-        let mates = node.mates;
-        let newMates = [];
-        if (mates) {
-          mates.forEach(m => {
-            newMates.push({
-              name: m.name,
-              object: m.object,
-              class: ["clickable"],
-              image_url: self.getNodeImage(""),
-              warnings: m.object ? m.object.remark_counts_me.WARN : 0,
-              errors: m.object ? m.object.remark_counts_me.ERROR : 0
+        if (node.name) {
+          let mates = node.mates;
+          let newMates = [];
+          if (mates) {
+            mates.forEach(m => {
+              newMates.push({
+                name: m.name,
+                object: m.object,
+                class: ["clickable"],
+                image_url: self.getNodeImage(""),
+                warnings: m.object ? m.object.remark_counts_me.WARN : 0,
+                errors: m.object ? m.object.remark_counts_me.ERROR : 0
+              });
             });
-          });
-        }
-
-        node.siblings = newMates;
-
-        let children = node.children;
-        node.image_url = self.getNodeImage(node.name, node.newPubpoint);
-        node.warnings = node.object ? node.object.remark_counts_me.WARN : 0;
-        node.errors = node.object ? node.object.remark_counts_me.ERROR : 0;
-        if (node.name !== "root") {
-          node.class = ["clickable"];
-          if (node.selected) {
-            node.class = ["selected"];
           }
-        }
 
-        if (children && children.length) {
-          children.forEach(child => {
-            if (child.children && child.children.length) {
-              traverse(child);
+          node.siblings = newMates;
+
+          let children = node.children;
+          node.image_url = self.getNodeImage(node.name, node.newPubpoint);
+          node.warnings = node.object ? node.object.remark_counts_me.WARN : 0;
+          node.errors = node.object ? node.object.remark_counts_me.ERROR : 0;
+          if (node.name !== "root") {
+            node.class = ["clickable"];
+            if (node.selected) {
+              node.class = ["selected"];
             }
-            if (child.object && child.object.objecttype === "ROA") {
-              if (child.name === roas[index].name) {
-                child.image_url = self.getNodeImage("green");
-              } else {
-                child.image_url = self.getNodeImage("white");
+          }
+
+          if (children && children.length) {
+            children.forEach(child => {
+              if (child.children && child.children.length) {
+                traverse(child);
               }
-            }
-          });
+              if (child.object && child.object.objecttype === "ROA") {
+                if (child.name === roas[index].name) {
+                  child.image_url = self.getNodeImage("green");
+                } else {
+                  child.image_url = self.getNodeImage("white");
+                }
+              }
+            });
+          }
         }
       }
       traverse(tree);
@@ -404,25 +405,49 @@ export default {
     },
     doSearch(search) {
       const self = this;
+      self.tree = {};
+      self.selectedNode = null;
+      self.activeTab = "0";
+      self.treeData = null;
       function selectNode(response) {
         self.loading = false;
         self.tree = response.data.data;
         if (!self.selectedNode) {
-          self.selectedNode = self.roas[0];
+          if (self.roas.length) {
+            self.selectedNode = self.roas[0];
+          }
           self.treeData = self.getTreeData(0);
         }
-        APIService.getObject(self.selectedNode.filename).then(response => {
-          self.currentObject = response.data;
-        });
+        if (self.selectedNode) {
+          APIService.getObject(self.selectedNode.filename).then(response => {
+            self.currentObject = response.data;
+          });
+        }
       }
+
       if (isIp(search)) {
         APIService.getPrefix(search).then(response => {
           selectNode(response);
         });
       } else {
-        APIService.getASN(search).then(response => {
-          selectNode(response);
-        });
+        if (search && search.toLowerCase().indexOf("as") === 0) {
+          search = search.substr(2) * 1;
+        }
+        if (search >= 0 && search <= 4294967295) {
+          APIService.getASN(search).then(response => {
+            if (response.data.data && response.data.data.name) {
+              selectNode(response);
+            } else {
+              APIService.getFilename(search).then(response => {
+                selectNode(response);
+              });
+            }
+          });
+        } else {
+          APIService.getFilename(search).then(response => {
+            selectNode(response);
+          });
+        }
       }
       return false;
     },
