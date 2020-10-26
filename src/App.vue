@@ -37,7 +37,7 @@
 
       <el-footer height="40px">
         <el-row>
-          <el-col :span="12"> &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs </el-col>
+          <el-col :span="12"> &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs, partly funded by the RIPE NCC Community Fund</el-col>
           <el-col :span="12" class="text-right">
             <a href="https://nlnetlabs.nl/services/contracts/" target="_blank">{{
               $t("common.supportcontracts")
@@ -145,5 +145,9 @@ a {
 .vue-pan-zoom-item:focus,
 .vue-pan-zoom-scene:focus {
   outline: none;
+}
+
+.el-drawer__body {
+  overflow-y: auto;
 }
 </style>

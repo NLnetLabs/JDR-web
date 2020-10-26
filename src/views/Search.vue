@@ -1,16 +1,63 @@
 <template>
   <div>
+    <el-drawer title="JDR Help" :visible.sync="showHelp" :with-header="false">
+      <div class="help">
+        <h4>Welcome to JDR, a tool to help you explore, inspect and troubleshoot anything RPKI.</h4>
+        <div class="with-padding">
+          Use the search box on this page to
+          <ul>
+            <li>
+              search for prefixes on ROAs: <code>2001:db8::/32</code> yields all the ROAs that
+              contain a VRP with this prefix, or a more-specific. If no such ROAs exist, the query
+              falls back to return ROAs with the first less-specific NB: a query without explicit
+              prefix size is interpreted as the full /128 or /32, e.g. <code>2001:db8::</code> is
+              interpreted as <code>2001:db8::/128</code>
+            </li>
+            <li>
+              search for AS numbers: any 32bit number prefixed by "AS" or "ASN", e.g.
+              <code>AS199664</code>, or <code>ASN199664</code>
+            </li>
+            <li>
+              search for (part of) the filename of any .crt/.mft/.crl/.roa. The number of results is
+              limited to 10.
+            </li>
+          </ul>
+          <br />
+          On the Publication Points tab you can see the overall status of the entire distributed
+          RPKI repository.
+          <br /><br />
+          Good to know: for now, all information shown in this tool is based on the
+          <strong>rsync</strong> distributed RPKI files. RRDP is on our roadmap. Files are retrieved
+          and processed every 10 minutes.
+        </div>
+      </div>
+    </el-drawer>
+
     <el-card class="box-card">
-      <el-form @submit.prevent.native="searchResource">
-        <el-form-item>
-          <el-input
-            placeholder="Search prefix or AS number"
-            prefix-icon="el-icon-search"
-            v-model="search"
-            clearable
-          ></el-input>
-        </el-form-item>
-      </el-form>
+      <el-row>
+        <el-col :span="16" :offset="4">
+          <div class="text-center welcome">
+            <div v-if="firstSearch">
+              <img src="@/assets/images/welcome.svg" />
+            </div>
+
+            <h3 v-if="firstSearch">
+              Welcome to JDR, a tool to help you explore, inspect and troubleshoot anything RPKI.
+            </h3>
+            <el-form @submit.prevent.native="searchResource">
+              <el-form-item>
+                <el-input
+                  placeholder="Search for prefix, AS number or filename..."
+                  prefix-icon="el-icon-search"
+                  v-model="search"
+                  clearable
+                  ><i slot="suffix" class="el-input__icon el-icon-help" @click="showHelp = true"></i
+                ></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-col>
+      </el-row>
 
       <div class="text item">
         <div v-if="loading" class="no-results">
@@ -39,7 +86,11 @@
         </el-row>
 
         <el-tabs v-if="roas.length" v-model="activeTab" @tab-click="clickTab">
-          <el-tab-pane v-for="(roa, index) in roas" :key="index" :label="'ROA ' + (index + 1)"></el-tab-pane>
+          <el-tab-pane
+            v-for="(roa, index) in roas"
+            :key="index"
+            :label="'ROA ' + (index + 1)"
+          ></el-tab-pane>
         </el-tabs>
 
         <el-row>
@@ -63,10 +114,18 @@
                     </el-row>
                     <el-row v-if="selectedNode.object.objecttype === 'CER'">
                       <el-col :span="4">
-                        Inherit Prefixes
+                        Inherit v4 Prefixes
                       </el-col>
                       <el-col :span="20">
-                        {{ selectedNode.object.object.inherit_prefixes }}
+                        {{ selectedNode.object.object.inherit_v4_prefixes }}
+                      </el-col>
+                    </el-row>
+                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
+                      <el-col :span="4">
+                        Inherit v6 Prefixes
+                      </el-col>
+                      <el-col :span="20">
+                        {{ selectedNode.object.object.inherit_v6_prefixes }}
                       </el-col>
                     </el-row>
                     <el-row v-if="selectedNode.object.objecttype === 'CER'">
@@ -104,13 +163,11 @@
                         Remarks
                       </el-col>
                       <el-col :span="20">
-                        <!-- <el-tag type="info">DEBUG {{ selectedNode.object.remark_counts_me.DBG }}</el-tag> -->
-                        <!-- <el-tag type="success">INFO {{ selectedNode.object.remark_counts_me.INFO }}</el-tag> -->
-                        <el-tag type="warning"
-                          >WARNING {{ selectedNode.object.remark_counts_me.WARN }}</el-tag
+                        <el-tag type="warning" v-if="selectedNode.object.remark_counts_me.WARN"
+                          >{{ selectedNode.object.remark_counts_me.WARN }} WARNINGS</el-tag
                         >
-                        <el-tag type="danger"
-                          >ERROR {{ selectedNode.object.remark_counts_me.ERR }}</el-tag
+                        <el-tag type="danger" v-if="selectedNode.object.remark_counts_me.ERR"
+                          >{{ selectedNode.object.remark_counts_me.ERR }} ERRORS</el-tag
                         >
                       </el-col>
                     </el-row>
@@ -119,13 +176,13 @@
                         Remarks children
                       </el-col>
                       <el-col :span="20">
-                        <!-- <el-tag type="info">DEBUG {{ selectedNode.object.remark_counts_children.DBG }}</el-tag> -->
-                        <!-- <el-tag type="success">INFO {{ selectedNode.object.remark_counts_children.INFO }}</el-tag> -->
-                        <el-tag type="warning"
-                          >WARNING {{ selectedNode.object.remark_counts_children.WARN }}</el-tag
+                        <el-tag
+                          type="warning"
+                          v-if="selectedNode.object.remark_counts_children.WARN"
+                          >{{ selectedNode.object.remark_counts_children.WARN }} WARNINGS</el-tag
                         >
-                        <el-tag type="danger"
-                          >ERROR {{ selectedNode.object.remark_counts_children.ERR }}</el-tag
+                        <el-tag type="danger" v-if="selectedNode.object.remark_counts_children.ERR"
+                          >{{ selectedNode.object.remark_counts_children.ERR }} ERRORS</el-tag
                         >
                       </el-col>
                     </el-row>
@@ -206,12 +263,12 @@
                         <strong>Remarks</strong>
                       </el-col>
                       <el-col :span="20">
-                        <!-- <el-tag type="info">DEBUG {{ selectedNode.remark_counts_me.DBG }}</el-tag>
-                          <el-tag type="success">INFO {{ selectedNode.remark_counts_me.INFO }}</el-tag> -->
-                        <el-tag type="warning"
-                          >WARNING {{ selectedNode.remark_counts_me.WARN }}</el-tag
+                        <el-tag type="warning" v-if="selectedNode.remark_counts_me.WARN"
+                          >{{ selectedNode.remark_counts_me.WARN }} WARNINGS</el-tag
                         >
-                        <el-tag type="danger">ERROR {{ selectedNode.remark_counts_me.ERR }}</el-tag>
+                        <el-tag type="danger" v-if="selectedNode.remark_counts_me.ERR"
+                          >{{ selectedNode.remark_counts_me.ERR }} ERRORS</el-tag
+                        >
                       </el-col>
                     </el-row>
                   </el-col>
@@ -292,7 +349,9 @@ export default {
         label: "tag"
       },
       treeData: null,
-      searchType: null
+      searchType: null,
+      showHelp: false,
+      firstSearch: true
     };
   },
   computed: {
@@ -376,7 +435,7 @@ export default {
       const roas = this.roas;
       const self = this;
       function traverse(node) {
-        if (node.name) {
+        if (node && node.name) {
           let mates = node.mates;
           let newMates = [];
           if (mates) {
@@ -430,13 +489,17 @@ export default {
     },
     doSearch(search) {
       const self = this;
+      self.firstSearch = false;
       self.tree = {};
       self.selectedNode = null;
       self.activeTab = "0";
       self.treeData = null;
       function selectNode(response) {
         self.loading = false;
-        self.tree = Array.isArray(response.data.data) ? response.data.data[0] : response.data.data;
+        self.tree =
+          Array.isArray(response.data.data) && response.data.data.length > 0
+            ? response.data.data[0]
+            : response.data.data;
         if (!self.selectedNode) {
           if (self.roas.length) {
             self.selectedNode = self.roas[0];
@@ -471,7 +534,11 @@ export default {
     searchResource() {
       this.loading = true;
       if (this.$route.params.search !== this.search) {
-        router.push("/search/" + this.search);
+        if (this.search) {
+          router.push("/search/" + encodeURIComponent(this.search));
+        } else {
+          router.push("/");
+        }
       }
       localStorage.setItem("jdr_last_search", this.search);
       this.doSearch(this.search);
@@ -525,10 +592,39 @@ h4 {
   .el-row {
     padding: 0.8rem;
     overflow-x: hidden;
+    word-break: break-word;
   }
 }
 .no-results {
   padding: 1rem;
   text-align: center;
+}
+.text-center {
+  text-align: center;
+}
+
+.welcome {
+  img {
+    height: 160px;
+    width: 200px;
+    margin: 2.5rem;
+  }
+  h3 {
+    margin-bottom: 2.5rem;
+  }
+  margin-bottom: 4rem;
+}
+
+.help {
+  line-height: 1.4rem;
+  color: #666;
+  code {
+    background: #e4f7ae;
+    padding: 0.2rem;
+  }
+  .with-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 </style>
