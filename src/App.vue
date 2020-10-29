@@ -115,6 +115,7 @@ export default {
   },
   mounted: function() {
     this.activeIndex = this.getActiveIndex(this.$route.name);
+    localStorage.removeItem("jdr_last_search");
   },
   methods: {
     getActiveIndex(path) {
