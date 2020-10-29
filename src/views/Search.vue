@@ -55,6 +55,7 @@
                 ></el-input>
               </el-form-item>
             </el-form>
+            <div class="spacer" v-if="firstSearch">&nbsp;</div>
           </div>
         </el-col>
       </el-row>
@@ -580,10 +581,6 @@ h4 {
 .avat {
   border: none;
 }
-.node .leaf .name {
-  font-size: 0.9rem;
-  text-overflow: ellipsis;
-}
 .clickable {
   cursor: pointer;
 }
@@ -612,7 +609,9 @@ h4 {
   h3 {
     margin-bottom: 2.5rem;
   }
-  margin-bottom: 4rem;
+  .spacer {
+    margin-bottom: 4rem;
+  }
 }
 
 .help {

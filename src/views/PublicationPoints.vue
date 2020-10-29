@@ -132,10 +132,6 @@ export default {
 .avat {
   border: none;
 }
-.node .leaf .name {
-  font-size: 0.9rem;
-  text-overflow: ellipsis;
-}
 .clickable {
   cursor: pointer;
 }

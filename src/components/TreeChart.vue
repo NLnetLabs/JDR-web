@@ -80,11 +80,11 @@
             </template>
           </div>
         </div>
-        <div
+        <!-- <div
           class="extend_handle"
           v-if="Array.isArray(treeData.children) && treeData.children.length"
           @click="toggleExtend(treeData)"
-        ></div>
+        ></div> -->
       </td>
     </tr>
     <tr v-if="Array.isArray(treeData.children) && treeData.children.length && treeData.extend">
@@ -153,7 +153,7 @@ table {
 td {
   position: relative;
   vertical-align: top;
-  padding: 0 0 30px 0;
+  padding: 0 0 16px 0;
   text-align: center;
 }
 
@@ -173,7 +173,7 @@ td {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    border: 2px solid;
+    border: 1px solid;
     border-color: #ccc #ccc transparent transparent;
     transform: rotateZ(135deg);
     transform-origin: 50% 50% 0;
@@ -196,7 +196,7 @@ td {
     left: 50%;
     bottom: 0;
     height: 15px;
-    border-left: 2px solid #ccc;
+    border-left: 1px solid #ccc;
     transform: translate3d(-1px, 0, 0);
   }
 }
@@ -210,7 +210,7 @@ td {
     left: 50%;
     bottom: 100%;
     height: 15px;
-    border-left: 2px solid #ccc;
+    border-left: 1px solid #ccc;
     transform: translate3d(-1px, 0, 0);
   }
 
@@ -220,7 +220,7 @@ td {
     left: 0;
     right: 0;
     top: -15px;
-    border-top: 2px solid #ccc;
+    border-top: 1px solid #ccc;
   }
 
   &:first-child:before,
@@ -231,7 +231,7 @@ td {
   &:first-child:after {
     left: 50%;
     height: 15px;
-    border: 2px solid;
+    border: 1px solid;
     border-color: #ccc transparent transparent #ccc;
     border-radius: 6px 0 0 0;
     transform: translate3d(1px, 0, 0);
@@ -240,7 +240,7 @@ td {
   &:last-child:after {
     right: 50%;
     height: 15px;
-    border: 2px solid;
+    border: 1px solid;
     border-color: #ccc #ccc transparent transparent;
     border-radius: 0 6px 0 0;
     transform: translate3d(-1px, 0, 0);
@@ -270,9 +270,9 @@ td {
 
     .avatar {
       display: block;
-      width: 3em;
-      height: 3em;
-      border-radius: 1.5em;
+      width: 2em;
+      height: 2em;
+      border-radius: 1em;
       border-width: 2px;
       margin: auto;
       overflow: hidden;
@@ -282,29 +282,6 @@ td {
     }
   }
 }
-
-.notification {
-  /* position: absolute; */
-  top: 0;
-  border-radius: 1em;
-  padding: 0.3em;
-  padding-top: 0.3em;
-  vertical-align: text-bottom;
-  font-size: 0.7em;
-  color: white;
-
-  &.warning {
-    background-color: #e6a23c;
-  }
-
-  &.error {
-    background-color: #f56c6c;
-  }
-}
-
-/* .notification.mate {
-  right: 0;
-} */
 
 .node {
   .leaf {
@@ -316,10 +293,10 @@ td {
     }
 
     .name {
-      height: 2em;
-      line-height: 2em;
+      height: 1.6em;
+      line-height: 1.6em;
       overflow: hidden;
-
+      font-size: 0.8rem;
       /* width: 100%; */
       width: 9rem;
       min-width: 9rem;
@@ -335,7 +312,7 @@ td {
     left: 2em;
     right: 2em;
     top: 1.5em;
-    border-top: 2px solid #ccc;
+    border-top: 1px solid #ccc;
     z-index: 1;
   }
 }
