@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card class="box-card">
+    <el-card shadow="never">
       <div class="text item">
         <span v-if="loading">
           <i class="el-icon-loading"></i>

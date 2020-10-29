@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card class="box-card">
+    <el-card shadow="never">
       <el-row>
         <el-col :span="16" :offset="4">
           <div class="text-center welcome">
@@ -36,7 +36,12 @@
 
         <div v-if="tree.length === 0" class="no-results">
           No results found for <span v-text="searchType"></span>&nbsp;
-          <strong><span v-text="searched"></span></strong>
+          <strong><span v-text="searched"></span></strong>.
+          <span v-if="searchType === SEARCH_TYPES.ASN"
+            >Do you want to
+            <a href="javascript: void(0)" @click="doSearch(search, true)">search for filename</a>
+            instead?</span
+          >
         </div>
 
         <el-row>
@@ -287,12 +292,6 @@ const isIp = require("is-ip");
 const cidrRegex = require("cidr-regex");
 import router from "@/router";
 
-const SEARCH_TYPES = {
-  PREFIX: "prefix",
-  ASN: "asn",
-  FILENAME: "filename"
-};
-
 export default {
   components: {
     TreeChart
@@ -313,7 +312,12 @@ export default {
       },
       treeData: null,
       searchType: null,
-      firstSearch: true
+      firstSearch: true,
+      SEARCH_TYPES: {
+        PREFIX: "prefix",
+        ASN: "asn",
+        FILENAME: "filename"
+      }
     };
   },
   computed: {
@@ -449,7 +453,7 @@ export default {
       traverse(tree);
       return tree;
     },
-    doSearch(search) {
+    doSearch(search, forceFilename = false) {
       const self = this;
       self.firstSearch = false;
       self.tree = {};
@@ -475,18 +479,23 @@ export default {
         }
       }
       this.searched = search;
-      if (isIp(search) || cidrRegex({ exact: true }).test(search)) {
-        this.searchType = SEARCH_TYPES.PREFIX;
+      if ((isIp(search) || cidrRegex({ exact: true }).test(search)) && !forceFilename) {
+        this.searchType = this.SEARCH_TYPES.PREFIX;
         APIService.getPrefix(search).then(response => {
           selectNode(response);
         });
-      } else if (search && search.toLowerCase().indexOf("as") === 0) {
-        this.searchType = SEARCH_TYPES.ASN;
+      } else if (
+        search &&
+        (search.toLowerCase().indexOf("as") === 0 ||
+          (search * 1 >= 0 && search * 1 <= 4294967295)) &&
+        !forceFilename
+      ) {
+        this.searchType = this.SEARCH_TYPES.ASN;
         APIService.getASN(search).then(response => {
           selectNode(response);
         });
       } else {
-        this.searchType = SEARCH_TYPES.FILENAME;
+        this.searchType = this.SEARCH_TYPES.FILENAME;
         APIService.getFilename(encodeURIComponent(search)).then(response => {
           selectNode(response);
         });
