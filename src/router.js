@@ -2,7 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 
 import Search from "./views/Search.vue";
-import PublicationPoints from "./views/PublicationPoints.vue";
+import Repositories from "./views/Repositories.vue";
 import PageNotFound from "./views/404.vue";
 
 
@@ -21,9 +21,9 @@ const router = new Router({
       component: Search
     },
     {
-      path: "/publicationpoints",
-      name: "publicationpoints",
-      component: PublicationPoints
+      path: "/repositories",
+      name: "repositories",
+      component: Repositories
     },
     { path: "*", component: PageNotFound }
   ]

@@ -22,8 +22,8 @@
               <el-menu-item index="0" :route="{ name: 'home' }">
                 Search Resources
               </el-menu-item>
-              <el-menu-item index="1" :route="{ name: 'publicationpoints' }">
-                Publication Points
+              <el-menu-item index="1" :route="{ name: 'repositories' }">
+                Repositories
               </el-menu-item>
             </el-menu>
             &nbsp;</el-col
@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     getActiveIndex(path) {
-      return "" + (["publicationpoints"].indexOf(path) + 1);
+      return "" + (["repositories"].indexOf(path) + 1);
     }
   }
 };

@@ -10,7 +10,7 @@
           :options="{ minZoom: 0.2, maxZoom: 2, bounds: false, boundPadding: 0, beforeWheel }"
         >
           <div>
-            <TreeChart :json="publicationPoints.data" @click-node="clickNode" />
+            <TreeChart :json="repositories.data" @click-node="clickNode" />
           </div>
         </panZoom>
       </div>
@@ -30,14 +30,14 @@ export default {
   data() {
     return {
       loading: false,
-      rawPublicationPoints: null,
-      rawPublicationPointsStatus: null,
-      publicationPoints: {}
+      rawRepositories: null,
+      rawRepositoriesStatus: null,
+      repositories: {}
     };
   },
   created() {
     this.loading = false;
-    this.loadPublicationPoints();
+    this.loadRepositories();
   },
   methods: {
     beforeWheel: function(e) {
@@ -46,19 +46,19 @@ export default {
       return shouldIgnore;
     },
     getStatusError(name) {
-      return this.rawPublicationPointsStatus[name].ping4.global_alert
+      return this.rawRepositoriesStatus[name].ping4.global_alert
         ? "v4"
-        : "" + "" + this.rawPublicationPointsStatus[name].ping6.global_alert
+        : "" + "" + this.rawRepositoriesStatus[name].ping6.global_alert
         ? "v6"
         : "";
     },
     getTreeData() {
-      let tree = this.rawPublicationPoints;
+      let tree = this.rawRepositories;
       const self = this;
       function traverse(node) {
         node.image_url = self.getNodeImage(node.name, node.newPubpoint);
-        if (self.rawPublicationPointsStatus) {
-          if (self.rawPublicationPointsStatus[node.name]) {
+        if (self.rawRepositoriesStatus) {
+          if (self.rawRepositoriesStatus[node.name]) {
             node.additionalInfo = self.getStatusError(node.name);
           } else {
             node.additionalInfo = "?";
@@ -70,8 +70,8 @@ export default {
         if (children && children.length) {
           children.forEach(child => {
             child.image_url = self.getNodeImage(child.name, child.newPubpoint);
-            if (self.rawPublicationPointsStatus) {
-              if (self.rawPublicationPointsStatus[child.name]) {
+            if (self.rawRepositoriesStatus) {
+              if (self.rawRepositoriesStatus[child.name]) {
                 child.additionalInfo = self.getStatusError(child.name);
               } else {
                 child.additionalInfo = "?";
@@ -88,14 +88,14 @@ export default {
       traverse(tree);
       return { data: tree };
     },
-    loadPublicationPoints() {
+    loadRepositories() {
       this.loading = true;
-      APIService.getPublicationPointsStatus().then(response => {
-        this.rawPublicationPointsStatus = response.data.data;
-        APIService.getPublicationPoints().then(response => {
+      APIService.getRepositoriesStatus().then(response => {
+        this.rawRepositoriesStatus = response.data.data;
+        APIService.getRepositories().then(response => {
           this.loading = false;
-          this.rawPublicationPoints = response.data.data;
-          this.publicationPoints = this.getTreeData();
+          this.rawRepositories = response.data.data;
+          this.repositories = this.getTreeData();
         });
       });
 

@@ -15,10 +15,10 @@ export default {
   getObject(path) {
     return apiClient.get("/api/v1/object/" + encodeURIComponent(path));
   },
-  getPublicationPoints() {
+  getRepositories() {
     return apiClient.get("/api/v1/pp");
   },
-  getPublicationPointsStatus() {
+  getRepositoriesStatus() {
     return apiClient.get("/api/v1/ppstatus");
   }
 };
