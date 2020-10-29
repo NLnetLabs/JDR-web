@@ -17,13 +17,13 @@
               placement="right"
               :disabled="treeData.newPubpoint === null"
             >
-              <div class="avatar" @click="$emit('click-node', treeData)">
+              <div class="avatar" @mouseup="$emit('click-node', treeData)">
                 <img :src="treeData.image_url" />
               </div>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" :content="treeData.name" placement="right">
               <div>
-                <div class="name" @click="$emit('click-node', treeData)">
+                <div class="name" @mouseup="$emit('click-node', treeData)">
                   <div class="name-container">
                     <el-row>
                       <el-col :span="3"><el-tag size="mini" type="info" v-if="treeData.additionalInfo">{{
@@ -50,7 +50,7 @@
                 v-for="(mate, mateIndex) in treeData.siblings"
                 :key="treeData.name + mateIndex"
                 :class="Array.isArray(mate.class) ? mate.class : []"
-                @click="$emit('click-node', mate)"
+                @mouseup="$emit('click-node', mate)"
               >
                 <el-tooltip class="item" effect="dark" :content="mate.name" placement="right">
                   <div>

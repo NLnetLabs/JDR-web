@@ -8,6 +8,8 @@
         </span>
         <panZoom
           :options="{ minZoom: 0.2, maxZoom: 2, bounds: false, boundPadding: 0, beforeWheel }"
+          @panstart="onPanStart"
+          @panend="onPanEnd"
         >
           <div>
             <TreeChart :json="repositories.data" @click-node="clickNode" />
@@ -32,7 +34,8 @@ export default {
       loading: false,
       rawRepositories: null,
       rawRepositoriesStatus: null,
-      repositories: {}
+      repositories: {},
+      isPanning: false
     };
   },
   created() {
@@ -102,7 +105,15 @@ export default {
       return false;
     },
     clickNode(node) {
-      router.push("/search/" + encodeURIComponent(node.object.filename));
+      if (!this.isPanning) {
+        router.push("/search/" + encodeURIComponent(node.object.filename));
+      }
+    },
+    onPanStart() {
+      this.isPanning = true;
+    },
+    onPanEnd() {
+      this.isPanning = false;
     }
   }
 };

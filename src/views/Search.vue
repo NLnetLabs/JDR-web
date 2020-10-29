@@ -48,6 +48,8 @@
           <el-col :span="24" style="overflow: hidden">
             <panZoom
               :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }"
+              @panstart="onPanStart"
+              @panend="onPanEnd"
               v-if="treeData !== null && treeData.name"
             >
               <TreeChart
@@ -317,7 +319,8 @@ export default {
         PREFIX: "prefix",
         ASN: "asn",
         FILENAME: "filename"
-      }
+      },
+      isPanning: false
     };
   },
   computed: {
@@ -378,19 +381,27 @@ export default {
       return shouldIgnore;
     },
     clickNode(node) {
-      if (node.object.objecttype !== "ROA") {
-        this.selectedNode = node;
-      } else {
-        this.roas.forEach((r, i) => {
-          if (node.object && r.name === node.object.name) {
-            this.activeTab = i + "";
-            this.clickTab();
-          }
+      if (!this.isPanning) {
+        if (node.object.objecttype !== "ROA") {
+          this.selectedNode = node;
+        } else {
+          this.roas.forEach((r, i) => {
+            if (node.object && r.name === node.object.name) {
+              this.activeTab = i + "";
+              this.clickTab();
+            }
+          });
+        }
+        APIService.getObject(node.object.filename).then(response => {
+          this.currentObject = response.data;
         });
       }
-      APIService.getObject(node.object.filename).then(response => {
-        this.currentObject = response.data;
-      });
+    },
+    onPanStart() {
+      this.isPanning = true;
+    },
+    onPanEnd() {
+      this.isPanning = false;
     },
     clickTab() {
       this.selectedNode = this.roas[this.activeTab * 1];
