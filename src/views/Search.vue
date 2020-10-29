@@ -445,6 +445,25 @@ export default {
                 child.errors = child.object.remark_counts_me.ERROR;
               } else if (!child.children || child.children.length === 0) {
                 child.image_url = self.getNodeImage("green");
+                let childMates = child.mates;
+                let newMates = [];
+                if (childMates) {
+                  childMates.forEach(m => {
+                    newMates.push({
+                      name: m.name,
+                      object: m.object,
+                      class: ["clickable"],
+                      image_url: self.getNodeImage(""),
+                      warnings: m.object ? m.object.remark_counts_me.WARN : 0,
+                      errors: m.object ? m.object.remark_counts_me.ERROR : 0
+                    });
+                  });
+                }
+                child.siblings = newMates;
+                self.selectedNode = child;
+                APIService.getObject(child.object.filename).then(response => {
+                  self.currentObject = response.data;
+                });
               }
             });
           }
@@ -471,11 +490,6 @@ export default {
             self.selectedNode = self.roas[0];
           }
           self.treeData = self.getTreeData(0);
-        }
-        if (self.selectedNode) {
-          APIService.getObject(self.selectedNode.filename).then(response => {
-            self.currentObject = response.data;
-          });
         }
       }
       this.searched = search;
