@@ -1,38 +1,5 @@
 <template>
   <div>
-    <el-drawer title="JDR Help" :visible.sync="showHelp" :with-header="false">
-      <div class="help">
-        <h4>Welcome to JDR, a tool to help you explore, inspect and troubleshoot anything RPKI.</h4>
-        <div class="with-padding">
-          Use the search box on this page to
-          <ul>
-            <li>
-              search for prefixes on ROAs: <code>2001:db8::/32</code> yields all the ROAs that
-              contain a VRP with this prefix, or a more-specific. If no such ROAs exist, the query
-              falls back to return ROAs with the first less-specific NB: a query without explicit
-              prefix size is interpreted as the full /128 or /32, e.g. <code>2001:db8::</code> is
-              interpreted as <code>2001:db8::/128</code>
-            </li>
-            <li>
-              search for AS numbers: any 32bit number prefixed by "AS" or "ASN", e.g.
-              <code>AS199664</code>, or <code>ASN199664</code>
-            </li>
-            <li>
-              search for (part of) the filename of any .crt/.mft/.crl/.roa. The number of results is
-              limited to 10.
-            </li>
-          </ul>
-          <br />
-          On the Publication Points tab you can see the overall status of the entire distributed
-          RPKI repository.
-          <br /><br />
-          Good to know: for now, all information shown in this tool is based on the
-          <strong>rsync</strong> distributed RPKI files. RRDP is on our roadmap. Files are retrieved
-          and processed every 10 minutes.
-        </div>
-      </div>
-    </el-drawer>
-
     <el-card class="box-card">
       <el-row>
         <el-col :span="16" :offset="4">
@@ -51,8 +18,9 @@
                   prefix-icon="el-icon-search"
                   v-model="search"
                   clearable
-                  ><i slot="suffix" class="el-input__icon el-icon-help" @click="showHelp = true"></i
-                ></el-input>
+                >
+                  ></el-input
+                >
               </el-form-item>
             </el-form>
             <div class="spacer" v-if="firstSearch">&nbsp;</div>
@@ -190,10 +158,7 @@
                   </el-col>
                   <el-col :span="12">
                     <el-row>
-                      <el-col :span="4">
-                        Raw object
-                      </el-col>
-                      <el-col :span="20">
+                      <el-col :span="24">
                         <el-tree
                           class="filter-tree"
                           :data="objectTree"
@@ -275,10 +240,7 @@
                   </el-col>
                   <el-col :span="12">
                     <el-row>
-                      <el-col :span="4">
-                        <strong>Raw object</strong>
-                      </el-col>
-                      <el-col :span="20">
+                      <el-col :span="24">
                         <el-tree
                           class="filter-tree"
                           :data="objectTree"
@@ -351,7 +313,6 @@ export default {
       },
       treeData: null,
       searchType: null,
-      showHelp: false,
       firstSearch: true
     };
   },

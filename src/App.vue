@@ -10,7 +10,7 @@
               </div>
             </router-link>
           </el-col>
-          <el-col :span="20"
+          <el-col :span="14"
             ><el-menu
               :router="true"
               :default-active="activeIndex"
@@ -28,6 +28,18 @@
             </el-menu>
             &nbsp;</el-col
           >
+          <el-col :span="6">
+            <el-menu
+              mode="horizontal"
+              background-color="#92bd11"
+              text-color="#fff"
+              active-text-color="#fff"
+            >
+              <el-menu-item @click="showHelp = true" class="help-menu">
+                <i class="el-icon-help"></i>
+              </el-menu-item>
+            </el-menu>
+          </el-col>
         </el-row>
       </el-header>
 
@@ -37,7 +49,10 @@
 
       <el-footer height="40px">
         <el-row>
-          <el-col :span="12"> &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs, partly funded by the RIPE NCC Community Fund</el-col>
+          <el-col :span="12">
+            &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs, partly funded by the RIPE
+            NCC Community Fund</el-col
+          >
           <el-col :span="12" class="text-right">
             <a href="https://nlnetlabs.nl/services/contracts/" target="_blank">{{
               $t("common.supportcontracts")
@@ -50,6 +65,38 @@
         </el-row>
       </el-footer>
     </el-container>
+    <el-drawer title="JDR Help" :visible.sync="showHelp" :with-header="false">
+      <div class="help">
+        <h4>Welcome to JDR, a tool to help you explore, inspect and troubleshoot anything RPKI.</h4>
+        <div class="with-padding">
+          Use the search box on this page to
+          <ul>
+            <li>
+              search for prefixes on ROAs: <code>2001:db8::/32</code> yields all the ROAs that
+              contain a VRP with this prefix, or a more-specific. If no such ROAs exist, the query
+              falls back to return ROAs with the first less-specific NB: a query without explicit
+              prefix size is interpreted as the full /128 or /32, e.g. <code>2001:db8::</code> is
+              interpreted as <code>2001:db8::/128</code>
+            </li>
+            <li>
+              search for AS numbers: any 32bit number prefixed by "AS" or "ASN", e.g.
+              <code>AS199664</code>, or <code>ASN199664</code>
+            </li>
+            <li>
+              search for (part of) the filename of any .crt/.mft/.crl/.roa. The number of results is
+              limited to 10.
+            </li>
+          </ul>
+          <br />
+          On the Publication Points tab you can see the overall status of the entire distributed
+          RPKI repository.
+          <br /><br />
+          Good to know: for now, all information shown in this tool is based on the
+          <strong>rsync</strong> distributed RPKI files. RRDP is on our roadmap. Files are retrieved
+          and processed every 10 minutes.
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -57,7 +104,8 @@
 export default {
   data() {
     return {
-      activeIndex: "0"
+      activeIndex: "0",
+      showHelp: false
     };
   },
   watch: {
@@ -115,6 +163,13 @@ body {
 .toolbar,
 .text-right {
   text-align: right;
+}
+
+.help-menu {
+  float: right !important;
+  i {
+    color: #ffffff !important;
+  }
 }
 
 .el-footer {
