@@ -134,6 +134,34 @@
                         }}</a>
                       </el-col>
                     </el-row>
+                    <el-row
+                      align="middle"
+                      v-if="
+                        selectedNode.object.objecttype === 'MFT' &&
+                          currentObject &&
+                          currentObject.data &&
+                          currentObject.data.object
+                      "
+                    >
+                      <el-col :span="4" class="table-label">
+                        Files
+                      </el-col>
+                      <el-col :span="20">
+                        <el-table
+                          size="small"
+                          :data="currentObject.data.object.files"
+                          style="width: 100%"
+                          height="220"
+                          :show-header="false"
+                        >
+                          <el-table-column label="File"
+                            ><template slot-scope="scope">{{
+                              scope.row
+                            }}</template></el-table-column
+                          >
+                        </el-table>
+                      </el-col>
+                    </el-row>
                     <el-row>
                       <el-col :span="4">
                         Remarks
@@ -206,15 +234,15 @@
                   <el-col :span="12">
                     <el-row>
                       <el-col :span="4">
-                        <strong>ASN</strong>
+                        ASN
                       </el-col>
                       <el-col :span="20">
                         {{ selectedNode.object.asid }}
                       </el-col>
                     </el-row>
                     <el-row align="middle">
-                      <el-col :span="4">
-                        <strong>VRPS</strong>
+                      <el-col :span="4" class="table-label">
+                        VRPS
                       </el-col>
                       <el-col :span="20">
                         <el-table
@@ -222,6 +250,7 @@
                           :data="selectedNode.object.vrps"
                           style="width: 100%"
                           height="220"
+                          :show-header="false"
                         >
                           <el-table-column label="Prefix"
                             ><template slot-scope="scope"
@@ -233,7 +262,7 @@
                     </el-row>
                     <el-row align="middle">
                       <el-col :span="4">
-                        <strong>Remarks</strong>
+                        Remarks
                       </el-col>
                       <el-col :span="20">
                         <el-tag type="warning" v-if="selectedNode.remark_counts_me.WARN"
@@ -609,16 +638,7 @@ h4 {
   }
 }
 
-.help {
-  line-height: 1.4rem;
-  color: #666;
-  code {
-    background: #e4f7ae;
-    padding: 0.2rem;
-  }
-  .with-padding {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+.table-label {
+  padding-top: 12px;
 }
 </style>

@@ -206,4 +206,17 @@ a {
 .el-drawer__body {
   overflow-y: auto;
 }
+
+.help {
+  line-height: 1.4rem;
+  color: #666;
+  code {
+    background: #e4f7ae;
+    padding: 0.2rem;
+  }
+  .with-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
 </style>
