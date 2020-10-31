@@ -60,7 +60,7 @@ export default {
       const self = this;
       function traverse(node) {
         node.image_url = self.getNodeImage(node.name, node.newPubpoint);
-        if (self.rawRepositoriesStatus) {
+        if (self.rawRepositoriesStatus && node.name !== "root") {
           if (self.rawRepositoriesStatus[node.name]) {
             node.additionalInfo = self.getStatusError(node.name);
           } else {

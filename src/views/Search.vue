@@ -476,6 +476,7 @@ export default {
                 traverse(child);
               }
               if (child.object && child.object.objecttype === "ROA") {
+                child.class = ["clickable"];
                 if (child.name === roas[index].name) {
                   child.image_url = self.getNodeImage("green");
                 } else {
@@ -485,6 +486,7 @@ export default {
                 child.errors = child.object.remark_counts_me.ERROR;
               } else if (!child.children || child.children.length === 0) {
                 child.image_url = self.getNodeImage("green");
+                child.class = ["clickable"];
                 let childMates = child.mates;
                 let newMates = [];
                 if (childMates) {
