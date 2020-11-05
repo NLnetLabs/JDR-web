@@ -396,11 +396,6 @@ export default {
       this.doSearch(this.search);
     }
   },
-  beforeRouteUpdate(to, from, next) {
-    this.search = to.params.search;
-    this.doSearch(this.search);
-    next();
-  },
   methods: {
     beforeUnload() {
       localStorage.removeItem("jdr_last_search");
