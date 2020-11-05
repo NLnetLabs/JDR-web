@@ -162,31 +162,205 @@
                         </el-table>
                       </el-col>
                     </el-row>
-                    <el-row>
+                    <el-row
+                      v-if="
+                        selectedNode.object.remark_counts_me.WARN ||
+                          selectedNode.object.remark_counts_me.ERR
+                      "
+                    >
                       <el-col :span="4">
                         Remarks
                       </el-col>
                       <el-col :span="20">
+                        <div class="error-tags" v-if="selectedNode.object.remark_counts_me.ERR">
+                          <el-tag type="danger" v-if="selectedNode.object.remark_counts_me.ERR"
+                            >{{ selectedNode.object.remark_counts_me.ERR }} ERRORS</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_me.ASN1Error"
+                            >{{ selectedNode.object.remark_counts_me.ASN1Error }} ASN1Error</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_me.ManifestIssue"
+                            >{{
+                              selectedNode.object.remark_counts_me.ManifestIssue
+                            }}
+                            ManifestIssue</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_me.MissingFile"
+                            >{{
+                              selectedNode.object.remark_counts_me.MissingFile
+                            }}
+                            MissingFile</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_me.ValidityIssue"
+                            >{{
+                              selectedNode.object.remark_counts_me.ValidityIssue
+                            }}
+                            ValidityIssue</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_me.ResourceIssue"
+                            >{{
+                              selectedNode.object.remark_counts_me.ResourceIssue
+                            }}
+                            ResourceIssue</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_me.LoopIssue"
+                            >{{ selectedNode.object.remark_counts_me.LoopIssue }} LoopIssue</el-tag
+                          >
+                        </div>
                         <el-tag type="warning" v-if="selectedNode.object.remark_counts_me.WARN"
                           >{{ selectedNode.object.remark_counts_me.WARN }} WARNINGS</el-tag
                         >
-                        <el-tag type="danger" v-if="selectedNode.object.remark_counts_me.ERR"
-                          >{{ selectedNode.object.remark_counts_me.ERR }} ERRORS</el-tag
+                        <el-tag
+                          type="warning"
+                          effect="plain"
+                          size="mini"
+                          v-if="selectedNode.object.remark_counts_me.ASN1Issue"
+                          >{{ selectedNode.object.remark_counts_me.ASN1Issue }} ASN1Issue</el-tag
+                        >
+                        <el-tag
+                          type="warning"
+                          effect="plain"
+                          size="mini"
+                          v-if="selectedNode.object.remark_counts_me.EncodingIssue"
+                          >{{
+                            selectedNode.object.remark_counts_me.EncodingIssue
+                          }}
+                          EncodingIssue</el-tag
                         >
                       </el-col>
                     </el-row>
-                    <el-row>
+                    <el-row
+                      v-if="
+                        selectedNode.object.remark_counts_children.WARN ||
+                          selectedNode.object.remark_counts_children.ERR
+                      "
+                    >
                       <el-col :span="4">
                         Remarks children
                       </el-col>
                       <el-col :span="20">
+                        <div
+                          class="error-tags"
+                          v-if="selectedNode.object.remark_counts_children.ERR"
+                        >
+                          <el-tag
+                            type="danger"
+                            size="medium"
+                            v-if="selectedNode.object.remark_counts_children.ERR"
+                            >{{ selectedNode.object.remark_counts_children.ERR }} ERRORS</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_children.ASN1Error"
+                            >{{
+                              selectedNode.object.remark_counts_children.ASN1Error
+                            }}
+                            ASN1Error</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_children.ManifestIssue"
+                            >{{
+                              selectedNode.object.remark_counts_children.ManifestIssue
+                            }}
+                            ManifestIssue</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_children.MissingFile"
+                            >{{
+                              selectedNode.object.remark_counts_children.MissingFile
+                            }}
+                            MissingFile</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_children.ValidityIssue"
+                            >{{
+                              selectedNode.object.remark_counts_children.ValidityIssue
+                            }}
+                            ValidityIssue</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_children.ResourceIssue"
+                            >{{
+                              selectedNode.object.remark_counts_children.ResourceIssue
+                            }}
+                            ResourceIssue</el-tag
+                          >
+                          <el-tag
+                            type="danger"
+                            effect="plain"
+                            size="mini"
+                            v-if="selectedNode.object.remark_counts_children.LoopIssue"
+                            >{{
+                              selectedNode.object.remark_counts_children.LoopIssue
+                            }}
+                            LoopIssue</el-tag
+                          >
+                        </div>
+
                         <el-tag
                           type="warning"
+                          size="medium"
                           v-if="selectedNode.object.remark_counts_children.WARN"
                           >{{ selectedNode.object.remark_counts_children.WARN }} WARNINGS</el-tag
                         >
-                        <el-tag type="danger" v-if="selectedNode.object.remark_counts_children.ERR"
-                          >{{ selectedNode.object.remark_counts_children.ERR }} ERRORS</el-tag
+
+                        <el-tag
+                          type="warning"
+                          effect="plain"
+                          size="mini"
+                          v-if="selectedNode.object.remark_counts_children.ASN1Issue"
+                          >{{
+                            selectedNode.object.remark_counts_children.ASN1Issue
+                          }}
+                          ASN1Issue</el-tag
+                        >
+                        <el-tag
+                          type="warning"
+                          effect="plain"
+                          size="mini"
+                          v-if="selectedNode.object.remark_counts_children.EncodingIssue"
+                          >{{
+                            selectedNode.object.remark_counts_children.EncodingIssue
+                          }}
+                          EncodingIssue</el-tag
                         >
                       </el-col>
                     </el-row>
@@ -645,5 +819,9 @@ h4 {
 
 .table-label {
   padding-top: 12px;
+}
+
+.error-tags {
+  margin-bottom: 1rem;
 }
 </style>
