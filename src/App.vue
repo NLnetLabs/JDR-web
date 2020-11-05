@@ -94,6 +94,9 @@
           Good to know: for now, all information shown in this tool is based on the
           <strong>rsync</strong> distributed RPKI files. RRDP is on our roadmap. Files are retrieved
           and processed every 10 minutes.
+          <br /><br />
+          To zoom in/out on the tree charts, use the mouse wheel while pressing Alt/Option on your keyboard.
+          <br /><br />
         </div>
       </div>
     </el-drawer>
