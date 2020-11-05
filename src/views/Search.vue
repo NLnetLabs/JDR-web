@@ -417,9 +417,7 @@ export default {
             }
           });
         }
-        APIService.getObject(node.object.filename).then(response => {
-          this.currentObject = response.data;
-        });
+        this.getObject(node.object.filename);
       }
     },
     onPanStart() {
@@ -481,7 +479,7 @@ export default {
                 child.errors = child.object.remark_counts_me.ERROR;
               } else if (!child.children || child.children.length === 0) {
                 child.class = ["clickable"];
-                if (child.name === self.selectedNode.name) {
+                if (!self.selectedNode || child.name === self.selectedNode.name) {
                   child.image_url = self.getNodeImage("green");
                 } else {
                   child.image_url = self.getNodeImage("white");
@@ -501,6 +499,10 @@ export default {
                   });
                 }
                 child.siblings = newMates;
+                if (!self.selectedNode) {
+                  self.selectedNode = child;
+                  self.getObject(child.object.filename);
+                }
               }
             });
           }
@@ -508,6 +510,11 @@ export default {
       }
       traverse(tree);
       return tree;
+    },
+    getObject(filename) {
+      APIService.getObject(filename).then(response => {
+        this.currentObject = response.data;
+      });
     },
     doSearch(search, forceFilename = false) {
       const self = this;
@@ -525,9 +532,7 @@ export default {
         if (!self.selectedNode) {
           if (self.roas.length) {
             self.selectedNode = self.roas[0];
-            APIService.getObject(self.selectedNode.filename).then(response => {
-              self.currentObject = response.data;
-            });
+            self.getObject(self.selectedNode.filename);
           }
           self.treeData = self.getTreeData();
         }
