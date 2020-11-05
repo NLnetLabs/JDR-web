@@ -52,16 +52,16 @@
               @panend="onPanEnd"
               v-if="treeData !== null && treeData.name"
             >
-              <TreeChart
-                :json="treeData"
-                :selectedRoa="roas[activeTab * 1]"
-                @click-node="clickNode"
-              />
+              <TreeChart :json="treeData" :selectedNode="selectedNode" @click-node="clickNode" />
             </panZoom>
           </el-col>
         </el-row>
 
-        <el-tabs v-if="roas.length" v-model="activeTab" @tab-click="clickTab">
+        <el-tabs
+          v-if="roas.length && searchType !== SEARCH_TYPES.FILENAME"
+          v-model="activeTab"
+          @tab-click="clickTab"
+        >
           <el-tab-pane
             v-for="(roa, index) in roas"
             :key="index"
@@ -408,6 +408,7 @@ export default {
       if (!this.isPanning) {
         if (node.object.objecttype !== "ROA") {
           this.selectedNode = node;
+          this.treeData = this.getTreeData();
         } else {
           this.roas.forEach((r, i) => {
             if (node.object && r.name === node.object.name) {
@@ -429,11 +430,10 @@ export default {
     },
     clickTab() {
       this.selectedNode = this.roas[this.activeTab * 1];
-      this.treeData = this.getTreeData(this.activeTab);
+      this.treeData = this.getTreeData();
     },
-    getTreeData(index) {
+    getTreeData() {
       let tree = this.tree;
-      const roas = this.roas;
       const self = this;
       function traverse(node) {
         if (node && node.name) {
@@ -472,7 +472,7 @@ export default {
               }
               if (child.object && child.object.objecttype === "ROA") {
                 child.class = ["clickable"];
-                if (child.name === roas[index].name) {
+                if (child.name === self.selectedNode.name) {
                   child.image_url = self.getNodeImage("green");
                 } else {
                   child.image_url = self.getNodeImage("white");
@@ -480,8 +480,12 @@ export default {
                 child.warnings = child.object.remark_counts_me.WARN;
                 child.errors = child.object.remark_counts_me.ERROR;
               } else if (!child.children || child.children.length === 0) {
-                child.image_url = self.getNodeImage("green");
                 child.class = ["clickable"];
+                if (child.name === self.selectedNode.name) {
+                  child.image_url = self.getNodeImage("green");
+                } else {
+                  child.image_url = self.getNodeImage("white");
+                }
                 let childMates = child.mates;
                 let newMates = [];
                 if (childMates) {
@@ -497,10 +501,6 @@ export default {
                   });
                 }
                 child.siblings = newMates;
-                self.selectedNode = child;
-                APIService.getObject(child.object.filename).then(response => {
-                  self.currentObject = response.data;
-                });
               }
             });
           }
@@ -525,8 +525,11 @@ export default {
         if (!self.selectedNode) {
           if (self.roas.length) {
             self.selectedNode = self.roas[0];
+            APIService.getObject(self.selectedNode.filename).then(response => {
+              self.currentObject = response.data;
+            });
           }
-          self.treeData = self.getTreeData(0);
+          self.treeData = self.getTreeData();
         }
       }
       this.searched = search;

@@ -96,7 +96,7 @@
       >
         <TreeChart
           :json="children"
-          :selectedRoa="selectedRoa"
+          :selectedNode="selectedNode"
           @click-node="$emit('click-node', $event)"
         />
       </td>
@@ -107,7 +107,7 @@
 <script>
 export default {
   name: "TreeChart",
-  props: ["json", "selectedRoa"],
+  props: ["json", "selectedNode"],
   data() {
     return {
       treeData: {}
@@ -131,7 +131,7 @@ export default {
       },
       immediate: true
     },
-    selectedRoa() {
+    selectedNode() {
       this.$forceUpdate();
     }
   },
