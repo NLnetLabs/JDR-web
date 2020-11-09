@@ -73,7 +73,7 @@ export default {
       let tree = this.rawRepositories;
       const self = this;
       function traverse(node) {
-        node.image_url = self.getNodeImage(node.name, node.newPubpoint);
+        node.image_url = self.getNodeImage(node.name, true);
         if (self.rawRepositoriesStatus && node.name !== "root") {
           self.setAdditionalInfo(node);
         }
@@ -85,7 +85,7 @@ export default {
         let children = node.children;
         if (children && children.length) {
           children.forEach(child => {
-            child.image_url = self.getNodeImage(child.name, child.newPubpoint);
+            child.image_url = self.getNodeImage(child.name, true);
             child.class = ["clickable"];
             if (self.rawRepositoriesStatus) {
               self.setAdditionalInfo(child);
