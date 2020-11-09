@@ -147,9 +147,15 @@
                         Files
                       </el-col>
                       <el-col :span="20">
+                        <el-input v-model="fileSearch" size="mini" placeholder="Search files..." />
                         <el-table
                           size="small"
-                          :data="currentObject.data.object.files"
+                          v-if="currentObject.data.object && currentObject.data.object.files"
+                          :data="
+                            currentObject.data.object.files
+                              .filter(f => f.toLowerCase().indexOf(fileSearch.toLowerCase()) > -1)
+                              .slice(0, 30)
+                          "
                           style="width: 100%"
                           height="220"
                           :show-header="false"
@@ -160,6 +166,16 @@
                             }}</template></el-table-column
                           >
                         </el-table>
+                        <div
+                          v-if="
+                            currentObject.data.object &&
+                              currentObject.data.object.files &&
+                              currentObject.data.object.files.length > 30
+                          "
+                          class="and-more"
+                        >
+                          and {{ currentObject.data.object.files.length - 30 }} more...
+                        </div>
                       </el-col>
                     </el-row>
                     <el-row
@@ -523,14 +539,30 @@ export default {
         ASN: "asn",
         FILENAME: "filename"
       },
-      isPanning: false
+      isPanning: false,
+      fileSearch: ""
     };
   },
   computed: {
     objectTree() {
-      if (this.currentObject && this.currentObject.data && this.currentObject.data.tree)
-        return [this.currentObject.data.tree];
-      return null;
+      let tree = null;
+      function traverse(children) {
+        if (children && children.length) {
+          children.forEach(child => {
+            if (child.children && child.children.length) {
+              if (child.children.length > 100) {
+                child.children = child.children.slice(0, 100);
+              }
+              traverse(child.children);
+            }
+          });
+        }
+      }
+      if (this.currentObject && this.currentObject.data && this.currentObject.data.tree) {
+        traverse(this.currentObject.data.tree.children);
+        tree = [this.currentObject.data.tree];
+      }
+      return tree;
     },
     roas() {
       let roas = [];
@@ -591,6 +623,7 @@ export default {
             }
           });
         }
+        this.fileSearch = "";
         this.getObject(node.object.filename);
       }
     },
@@ -818,7 +851,7 @@ h4 {
 }
 
 .table-label {
-  padding-top: 12px;
+  padding-top: 6px;
 }
 
 .error-tags {
@@ -829,5 +862,11 @@ h4 {
   .el-tag {
     margin-bottom: 0;
   }
+}
+
+.and-more {
+  color: #bbbbbb;
+  padding: 1rem;
+  font-size: 0.8rem;
 }
 </style>
