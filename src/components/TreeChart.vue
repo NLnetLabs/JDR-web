@@ -21,30 +21,52 @@
                 <img :src="treeData.image_url" />
               </div>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" :content="treeData.name" placement="right">
-              <div>
-                <div class="name" @mouseup="$emit('click-node', treeData)">
-                  <div class="name-container">
-                    <el-row>
-                      <el-col :span="3"><el-tag size="mini" type="info" v-if="treeData.additionalInfo">{{
-                          treeData.additionalInfo
-                        }}</el-tag>&nbsp;</el-col>
-                      <el-col :span="18"
-                        ><div v-text-middle-ellipsis="4">{{ treeData.name }}</div></el-col
+
+            <div>
+              <div class="name" @mouseup="$emit('click-node', treeData)">
+                <div class="name-container">
+                  <el-row>
+                    <el-col :span="3"
+                      ><el-tooltip
+                        class="item"
+                        effect="dark"
+                        :content="treeData.additionalInfo"
+                        placement="left"
+                        v-if="treeData.additionalInfo"
+                        ><div :class="treeData.additionalInfoSeverity">
+                          <i class="el-icon-warning"></i></div></el-tooltip
+                      >&nbsp;</el-col
+                    >
+                    <el-col :span="18"
+                      ><el-tooltip
+                        class="item"
+                        effect="dark"
+                        :content="treeData.name"
+                        placement="right"
+                        ><div v-text-middle-ellipsis="4">{{ treeData.name }}</div></el-tooltip
+                      ></el-col
+                    >
+                    <el-col :span="3"
+                      >&nbsp;<el-tag
+                        size="mini"
+                        type="warning"
+                        v-if="treeData.warnings"
+                        :title="treeData.warnings + ' warnings'"
+                        >{{ treeData.warnings }}</el-tag
                       >
-                      <el-col :span="3"
-                        >&nbsp;<el-tag size="mini" type="warning" v-if="treeData.warnings">{{
-                          treeData.warnings
-                        }}</el-tag>
-                        <el-tag size="mini" type="danger" v-if="treeData.errors">{{
-                          treeData.errors
-                        }}</el-tag></el-col
-                      >
-                    </el-row>
-                  </div>
+                      <el-tag
+                        size="mini"
+                        type="danger"
+                        v-if="treeData.errors"
+                        :title="treeData.errors + ' errors'"
+                        >{{ treeData.errors }}</el-tag
+                      ></el-col
+                    >
+                  </el-row>
                 </div>
               </div>
-            </el-tooltip>
+            </div>
+
             <template v-if="Array.isArray(treeData.siblings) && treeData.siblings.length">
               <div
                 v-for="(mate, mateIndex) in treeData.siblings"
@@ -52,39 +74,59 @@
                 :class="Array.isArray(mate.class) ? mate.class : []"
                 @mouseup="$emit('click-node', mate)"
               >
-                <el-tooltip class="item" effect="dark" :content="mate.name" placement="right">
-                  <div>
-                    <div class="name leafname" @click="$emit('click-node', mate)">
-                      <div class="name-container">
-                        <el-row>
-                          <el-col :span="3"><el-tag size="mini" type="info" v-if="treeData.additionalInfo">{{
-                          treeData.additionalInfo
-                        }}</el-tag>&nbsp;</el-col>
-                          <el-col :span="18"
-                            ><div v-text-middle-ellipsis="4">{{ mate.name }}</div></el-col
+                <div>
+                  <div class="name leafname" @click="$emit('click-node', mate)">
+                    <div class="name-container">
+                      <el-row>
+                        <el-col :span="3"
+                          ><el-tooltip
+                            class="item"
+                            effect="dark"
+                            :content="mate.additionalInfo"
+                            placement="left"
+                            v-if="mate.additionalInfo"
+                            ><div :class="mate.additionalInfoSeverity">
+                              <i class="el-icon-warning"></i></div></el-tooltip
+                          >&nbsp;</el-col
+                        >
+                        <el-col :span="18"
+                          ><el-tooltip
+                            class="item"
+                            effect="dark"
+                            :content="mate.name"
+                            placement="right"
+                            ><div v-text-middle-ellipsis="4">{{ mate.name }}</div></el-tooltip
+                          ></el-col
+                        >
+                        <el-col :span="3"
+                          >&nbsp;<el-tag
+                            size="mini"
+                            type="warning"
+                            v-if="mate.warnings"
+                            :title="mate.warnings + ' warnings'"
+                            >{{ mate.warnings }}</el-tag
                           >
-                          <el-col :span="3"
-                            >&nbsp;<el-tag size="mini" type="warning" v-if="mate.warnings">{{
-                              mate.warnings
-                            }}</el-tag>
-                            <el-tag size="mini" type="danger" v-if="mate.errors">{{
-                              mate.errors
-                            }}</el-tag></el-col
-                          >
-                        </el-row>
-                      </div>
+                          <el-tag
+                            size="mini"
+                            type="danger"
+                            v-if="mate.errors"
+                            :title="mate.errors + ' errors'"
+                            >{{ mate.errors }}</el-tag
+                          ></el-col
+                        >
+                      </el-row>
                     </div>
                   </div>
-                </el-tooltip>
+                </div>
               </div>
             </template>
           </div>
         </div>
-        <!-- <div
+        <div
           class="extend_handle"
-          v-if="Array.isArray(treeData.children) && treeData.children.length"
+          v-if="Array.isArray(treeData.children) && treeData.children.length > 4"
           @click="toggleExtend(treeData)"
-        ></div> -->
+        ></div>
       </td>
     </tr>
     <tr v-if="Array.isArray(treeData.children) && treeData.children.length && treeData.extend">
@@ -376,5 +418,17 @@ td {
   width: 8rem;
   margin-left: auto;
   margin-right: auto;
+}
+
+.danger {
+  color: #f56c6c;
+}
+
+.warning {
+  color: #e6a23c;
+}
+
+.info {
+  color: #bbb;
 }
 </style>

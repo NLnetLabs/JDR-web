@@ -377,7 +377,7 @@
                           v-if="objectTree"
                           style="max-height: 300px; overflow-y:auto"
                         >
-                          <span class="custom-tree-node" slot-scope="{ node, data }">
+                          <span class="tree-node" slot-scope="{ node, data }">
                             <span v-if="data.nicename"
                               >{{ data.nicename }} <span class="tagname">{{ data.tag }}</span></span
                             >
@@ -460,7 +460,7 @@
                           v-if="objectTree"
                           style="max-height: 300px; overflow-y:auto"
                         >
-                          <span class="custom-tree-node" slot-scope="{ node, data }">
+                          <span class="tree-node" slot-scope="{ node, data }">
                             <span v-if="data.nicename"
                               >{{ data.nicename }} <span class="tagname">{{ data.tag }}</span></span
                             >
@@ -823,5 +823,11 @@ h4 {
 
 .error-tags {
   margin-bottom: 1rem;
+}
+
+.tree-node {
+  .el-tag {
+    margin-bottom: 0;
+  }
 }
 </style>

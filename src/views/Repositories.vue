@@ -50,10 +50,24 @@ export default {
     },
     getStatusError(name) {
       return this.rawRepositoriesStatus[name].ping4.global_alert
-        ? "v4"
-        : "" + "" + this.rawRepositoriesStatus[name].ping6.global_alert
-        ? "v6"
+        ? this.rawRepositoriesStatus[name].ping4.total_alerts + " alerts on ping v4"
+        : "" + " " + this.rawRepositoriesStatus[name].ping6.global_alert
+        ? this.rawRepositoriesStatus[name].ping6.total_alerts + " alerts on ping v6"
         : "";
+    },
+    setAdditionalInfo(node) {
+      if (this.rawRepositoriesStatus[node.name]) {
+        if (
+          this.rawRepositoriesStatus[node.name].ping4.total_alerts > 7 ||
+          this.rawRepositoriesStatus[node.name].ping6.total_alerts > 7
+        ) {
+          node.additionalInfoSeverity = "warning";
+          node.additionalInfo = this.getStatusError(node.name);
+        }
+      } else {
+        node.additionalInfoSeverity = "info";
+        node.additionalInfo = "Not available on RIPE Atlas";
+      }
     },
     getTreeData() {
       let tree = this.rawRepositories;
@@ -61,11 +75,10 @@ export default {
       function traverse(node) {
         node.image_url = self.getNodeImage(node.name, node.newPubpoint);
         if (self.rawRepositoriesStatus && node.name !== "root") {
-          if (self.rawRepositoriesStatus[node.name]) {
-            node.additionalInfo = self.getStatusError(node.name);
-          } else {
-            node.additionalInfo = "?";
-          }
+          self.setAdditionalInfo(node);
+        }
+        if (node.name !== "root") {
+          node.class = ["clickable"];
         }
         node.warnings = node.object ? node.object.remark_counts_me.WARN : 0;
         node.errors = node.object ? node.object.remark_counts_me.ERROR : 0;
@@ -73,12 +86,9 @@ export default {
         if (children && children.length) {
           children.forEach(child => {
             child.image_url = self.getNodeImage(child.name, child.newPubpoint);
+            child.class = ["clickable"];
             if (self.rawRepositoriesStatus) {
-              if (self.rawRepositoriesStatus[child.name]) {
-                child.additionalInfo = self.getStatusError(child.name);
-              } else {
-                child.additionalInfo = "?";
-              }
+              self.setAdditionalInfo(child);
             }
             child.warnings = child.object ? child.object.remark_counts_me.WARN : 0;
             child.errors = child.object ? child.object.remark_counts_me.ERROR : 0;
