@@ -652,7 +652,7 @@ export default {
                 class: ["clickable"],
                 image_url: self.getNodeImage(""),
                 warnings: m.object ? m.object.remark_counts_me.WARN : 0,
-                errors: m.object ? m.object.remark_counts_me.ERROR : 0
+                errors: m.object ? m.object.remark_counts_me.ERR : 0
               });
             });
           }
@@ -662,7 +662,7 @@ export default {
           let children = node.children;
           node.image_url = self.getNodeImage(node.name, node.newPubpoint);
           node.warnings = node.object ? node.object.remark_counts_me.WARN : 0;
-          node.errors = node.object ? node.object.remark_counts_me.ERROR : 0;
+          node.errors = node.object ? node.object.remark_counts_me.ERR : 0;
           if (node.name !== "root") {
             node.class = ["clickable"];
             if (node.selected) {

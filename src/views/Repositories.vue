@@ -47,8 +47,9 @@
                 ><template slot-scope="scope">
                   <div :class="scope.row.lvl === 'ERR' ? 'danger' : 'warning'">
                     <i class="el-icon-warning"></i> {{ scope.row.lvl }}
-                  </div> </template
-              ></el-table-column>
+                  </div>
+                </template></el-table-column
+              >
               <el-table-column label="Type" prop="type" width="100"></el-table-column>
               <el-table-column label="View" width="100"
                 ><template slot-scope="scope"
@@ -125,8 +126,7 @@ export default {
         if (node.name !== "root") {
           node.class = ["clickable"];
         }
-        node.warnings = node.object ? node.object.remark_counts_me.WARN : 0;
-        node.errors = node.object ? node.object.remark_counts_me.ERROR : 0;
+        node.errors = node.object ? node.object.remark_counts_children.ERR : 0;
         let children = node.children;
         if (children && children.length) {
           children.forEach(child => {
@@ -135,8 +135,7 @@ export default {
             if (self.rawRepositoriesStatus) {
               self.setAdditionalInfo(child);
             }
-            child.warnings = child.object ? child.object.remark_counts_me.WARN : 0;
-            child.errors = child.object ? child.object.remark_counts_me.ERROR : 0;
+            child.errors = child.object ? child.object.remark_counts_children.ERR : 0;
             if (child.children && child.children.length) {
               traverse(child);
             }

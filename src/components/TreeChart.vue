@@ -34,7 +34,7 @@
                         placement="left"
                         v-if="treeData.additionalInfo"
                         ><div :class="treeData.additionalInfoSeverity">
-                          <i class="el-icon-warning"></i></div></el-tooltip
+                          <i class="el-icon-discover"></i></div></el-tooltip
                       >&nbsp;</el-col
                     >
                     <el-col :span="18"
@@ -86,7 +86,7 @@
                             placement="left"
                             v-if="mate.additionalInfo"
                             ><div :class="mate.additionalInfoSeverity">
-                              <i class="el-icon-warning"></i></div></el-tooltip
+                              <i class="el-icon-discover"></i></div></el-tooltip
                           >&nbsp;</el-col
                         >
                         <el-col :span="18"
