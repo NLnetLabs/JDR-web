@@ -20,5 +20,8 @@ export default {
   },
   getRepositoriesStatus() {
     return apiClient.get("/api/v1/ppstatus");
+  },
+  getRepositoriesStats() {
+    return apiClient.get("/api/v1/repostats");
   }
 };

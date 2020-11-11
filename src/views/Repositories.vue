@@ -17,6 +17,50 @@
         </panZoom>
       </div>
     </el-card>
+
+    <el-card shadow="never">
+      <el-collapse>
+        <el-collapse-item
+          v-for="(repo, index) in repositoriesStats.data"
+          :key="index"
+          :name="index"
+          :disabled="repo[Object.keys(repo)[0]].remarks.length === 0"
+        >
+          <template slot="title">
+            <div :class="repo[Object.keys(repo)[0]].remarks.length > 0 ? 'danger' : 'all-good'">
+              <i class="el-icon-warning" v-if="repo[Object.keys(repo)[0]].remarks.length > 0"></i
+              ><i
+                class="el-icon-success"
+                v-if="repo[Object.keys(repo)[0]].remarks.length === 0"
+              ></i>
+            </div>
+            &nbsp; {{ Object.keys(repo)[0] }}
+          </template>
+          <div>
+            <el-table
+              size="small"
+              :data="repo[Object.keys(repo)[0]].remarks"
+              style="width: 100%"
+              :show-header="false"
+            >
+              <el-table-column label="Level" width="70"
+                ><template slot-scope="scope">
+                  <div :class="scope.row.lvl === 'ERR' ? 'danger' : 'warning'">
+                    <i class="el-icon-warning"></i> {{ scope.row.lvl }}
+                  </div> </template
+              ></el-table-column>
+              <el-table-column label="Type" prop="type" width="100"></el-table-column>
+              <el-table-column label="View" width="100"
+                ><template slot-scope="scope"
+                  ><a href="javascript:void(0)" @click="viewFile(scope.row)">View</a></template
+                ></el-table-column
+              >
+              <el-table-column label="Message" prop="msg"></el-table-column>
+            </el-table>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+    </el-card>
   </div>
 </template>
 
@@ -34,6 +78,7 @@ export default {
       loading: false,
       rawRepositories: null,
       rawRepositoriesStatus: null,
+      repositoriesStats: {},
       repositories: {},
       isPanning: false
     };
@@ -112,12 +157,19 @@ export default {
         });
       });
 
+      APIService.getRepositoriesStats().then(response => {
+        this.repositoriesStats = response.data;
+      });
+
       return false;
     },
     clickNode(node) {
       if (!this.isPanning) {
         router.push("/search/" + encodeURIComponent(node.object.filename));
       }
+    },
+    viewFile(row) {
+      router.push("/search/" + row.url.split("/").pop());
     },
     onPanStart() {
       this.isPanning = true;
@@ -155,5 +207,16 @@ export default {
 }
 .clickable {
   cursor: pointer;
+}
+
+.all-good {
+  color: #92bd11;
+}
+.danger {
+  color: #f56c6c;
+}
+
+.warning {
+  color: #e6a23c;
 }
 </style>
