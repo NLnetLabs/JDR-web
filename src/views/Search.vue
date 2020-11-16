@@ -384,32 +384,7 @@
                   <el-col :span="12">
                     <el-row>
                       <el-col :span="24">
-                        <el-tree
-                          class="filter-tree"
-                          :data="objectTree"
-                          :props="defaultProps"
-                          default-expand-all
-                          ref="tree"
-                          v-if="objectTree"
-                          style="max-height: 300px; overflow-y:auto"
-                        >
-                          <span class="tree-node" slot-scope="{ node, data }">
-                            <span v-if="data.nicename"
-                              >{{ data.nicename }} <span class="tagname">{{ data.tag }}</span></span
-                            >
-                            <span v-if="!data.nicename" class="name">{{ data.tag }}</span>
-                            <strong v-if="data.nicevalue">&nbsp;&nbsp;{{ data.nicevalue }}</strong>
-                            &nbsp;&nbsp;
-                            <span v-for="(remark, index) in data.remarks" :key="index">
-                              <el-tag size="mini" type="warning" v-if="remark.lvl === 'WARN'">{{
-                                remark.msg
-                              }}</el-tag>
-                              <el-tag size="mini" type="danger" v-if="remark.lvl === 'ERROR'">{{
-                                remark.msg
-                              }}</el-tag>
-                            </span>
-                          </span>
-                        </el-tree>
+                        <ASN1 :currentObject="currentObject" :objectTree="objectTree" :defaultProps="defaultProps" ></ASN1>
                       </el-col>
                     </el-row>
                   </el-col>
@@ -467,32 +442,7 @@
                   <el-col :span="12">
                     <el-row>
                       <el-col :span="24">
-                        <el-tree
-                          class="filter-tree"
-                          :data="objectTree"
-                          :props="defaultProps"
-                          default-expand-all
-                          ref="tree"
-                          v-if="objectTree"
-                          style="max-height: 300px; overflow-y:auto"
-                        >
-                          <span class="tree-node" slot-scope="{ node, data }">
-                            <span v-if="data.nicename"
-                              >{{ data.nicename }} <span class="tagname">{{ data.tag }}</span></span
-                            >
-                            <span v-if="!data.nicename" class="name">{{ data.tag }}</span>
-                            <strong v-if="data.nicevalue">&nbsp;&nbsp;{{ data.nicevalue }}</strong>
-                            &nbsp;&nbsp;
-                            <span v-for="(remark, index) in data.remarks" :key="index">
-                              <el-tag size="mini" type="warning" v-if="remark.lvl === 'WARN'">{{
-                                remark.msg
-                              }}</el-tag>
-                              <el-tag size="mini" type="danger" v-if="remark.lvl === 'ERROR'">{{
-                                remark.msg
-                              }}</el-tag>
-                            </span>
-                          </span>
-                        </el-tree>
+                        <ASN1 :currentObject="currentObject" :objectTree="objectTree" :defaultProps="defaultProps" ></ASN1>
                       </el-col>
                     </el-row>
                   </el-col>
@@ -508,6 +458,7 @@
 
 <script>
 import TreeChart from "@/components/TreeChart";
+import ASN1 from "@/components/ASN1";
 import APIService from "@/services/APIService.js";
 const isIp = require("is-ip");
 const cidrRegex = require("cidr-regex");
@@ -515,7 +466,7 @@ import router from "@/router";
 
 export default {
   components: {
-    TreeChart
+    TreeChart, ASN1
   },
   data() {
     return {
