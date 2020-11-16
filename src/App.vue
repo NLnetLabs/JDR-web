@@ -54,10 +54,6 @@
             NCC Community Fund</el-col
           >
           <el-col :span="12" class="text-right">
-            <a href="https://nlnetlabs.nl/services/contracts/" target="_blank">{{
-              $t("common.supportcontracts")
-            }}</a>
-            -
             <a href="https://github.com/NLnetLabs/JDR-web/issues/new" target="_blank">{{
               $t("common.report")
             }}</a>
