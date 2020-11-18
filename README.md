@@ -21,7 +21,7 @@ mailing list](https://lists.nlnetlabs.nl/mailman/listinfo/rpki).
  - [ ] Certificate revocation
 
 
-## Thank you RIPE NCC <3
+## Thank you RIPE NCC :heart:
 
 This project is partly funded by the [RIPE NCC Community Projects
 Fund](https://www.ripe.net/support/cpf/ripe-ncc-community-projects-fund).
