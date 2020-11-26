@@ -710,11 +710,9 @@ export default {
       return shouldIgnore;
     },
     clickNode(node) {
-      console.log("click node", node);
       if (!this.isPanning) {
         if (node.object.objecttype !== "ROA") {
           this.selectedNode = node;
-          console.log(this.selectedNode);
           this.treeData = this.getTreeData();
         } else {
           this.roas.forEach((r, i) => {
@@ -726,7 +724,6 @@ export default {
         }
         this.fileSearch = "";
         this.serialsSearch = "";
-        console.log("banan?");
         this.getObject(node.object.filename);
       }
     },

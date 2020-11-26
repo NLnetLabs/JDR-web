@@ -72,7 +72,6 @@
                 v-for="(mate, mateIndex) in treeData.siblings"
                 :key="treeData.name + mateIndex"
                 :class="Array.isArray(mate.class) ? mate.class : []"
-                @mouseup="$emit('click-node', mate)"
               >
                 <div>
                   <div class="name leafname" @click="$emit('click-node', mate)">
