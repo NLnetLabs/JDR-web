@@ -2,10 +2,10 @@
   <div>
     <el-card shadow="never">
       <div class="text item">
-        <span v-if="loading">
+        <div v-if="loading" class="no-results">
           <i class="el-icon-loading"></i>
-          Searching...
-        </span>
+          Loading...
+        </div>
         <panZoom
           :options="{ minZoom: 0.2, maxZoom: 2, bounds: false, boundPadding: 0, beforeWheel }"
           @panstart="onPanStart"
@@ -18,7 +18,7 @@
       </div>
     </el-card>
 
-    <el-card shadow="never">
+    <el-card shadow="never" style="margin-top: 2rem">
       <el-collapse>
         <el-collapse-item
           v-for="(repo, index) in repositoriesStats.data"
@@ -218,4 +218,10 @@ export default {
 .warning {
   color: #e6a23c;
 }
+
+.no-results {
+  padding: 1rem;
+  text-align: center;
+}
+
 </style>

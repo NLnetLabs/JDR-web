@@ -228,7 +228,6 @@ a {
 
 .vue-pan-zoom-item {
   cursor: move;
-  margin-bottom: 2rem;
   background: #F6F6F6;
   border-radius: 4px;
 }
