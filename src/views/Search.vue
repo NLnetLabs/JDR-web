@@ -44,7 +44,7 @@
           >
         </div>
 
-        <el-row>
+        <el-row style="margin-bottom: 1rem">
           <el-col :span="24" style="overflow: hidden">
             <panZoom
               :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }"
