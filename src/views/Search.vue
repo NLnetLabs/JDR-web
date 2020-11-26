@@ -139,9 +139,12 @@
                           Manifest
                         </el-col>
                         <el-col :span="20">
-                          <a :href="selectedNode.object.object.manifest">{{
-                            selectedNode.object.object.manifest
-                          }}</a>
+                          {{ getManifestRoot(selectedNode.object.object.manifest) }}
+                          <a
+                            href="javascript: void(0)"
+                            @click="loadManifest(selectedNode.object.object.manifest)"
+                            >{{ selectedNode.object.object.manifest.split("/").pop() }}</a
+                          >
                         </el-col>
                       </el-row>
                       <el-row>
@@ -149,9 +152,7 @@
                           Pubpoint
                         </el-col>
                         <el-col :span="20">
-                          <a :href="selectedNode.object.object.pubpoint">{{
-                            selectedNode.object.object.pubpoint
-                          }}</a>
+                          {{ selectedNode.object.object.pubpoint }}
                         </el-col>
                       </el-row>
                       <el-row>
@@ -709,9 +710,11 @@ export default {
       return shouldIgnore;
     },
     clickNode(node) {
+      console.log("click node", node);
       if (!this.isPanning) {
         if (node.object.objecttype !== "ROA") {
           this.selectedNode = node;
+          console.log(this.selectedNode);
           this.treeData = this.getTreeData();
         } else {
           this.roas.forEach((r, i) => {
@@ -722,6 +725,8 @@ export default {
           });
         }
         this.fileSearch = "";
+        this.serialsSearch = "";
+        console.log("banan?");
         this.getObject(node.object.filename);
       }
     },
@@ -891,6 +896,40 @@ export default {
     updateLastUpdate(response) {
       if (response.data && response.data.last_update) {
         this.$emit("update-last", response.data.last_update);
+      }
+    },
+    getManifestRoot(rsyncUrl) {
+      const parts = rsyncUrl.split("/");
+      parts.pop();
+      return parts.join("/") + "/";
+    },
+    loadManifest(rsyncUrl) {
+      const self = this;
+      const mft = rsyncUrl.split("/").pop();
+      function loadMft(node) {
+        self.clickNode(node);
+      }
+      function traverse(children) {
+        if (children && children.length) {
+          children.forEach(child => {
+            if (child.name === mft) {
+              loadMft(child);
+            }
+            if (child.mates) {
+              child.mates.forEach(m => {
+                if (m.name === mft) {
+                  loadMft(m);
+                }
+              });
+            }
+            if (child.children && child.children.length) {
+              traverse(child.children);
+            }
+          });
+        }
+      }
+      if (this && this.tree && this.tree.children) {
+        traverse(this.tree.children);
       }
     }
   }
