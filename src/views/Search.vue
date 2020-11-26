@@ -80,60 +80,87 @@
               >
                 <el-row>
                   <el-col :span="12">
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        Inherit ASNs
-                      </el-col>
-                      <el-col :span="20">
-                        {{ selectedNode.object.object.inherit_ASNs }}
-                      </el-col>
-                    </el-row>
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        Inherit v4 Prefixes
-                      </el-col>
-                      <el-col :span="20">
-                        {{ selectedNode.object.object.inherit_v4_prefixes }}
-                      </el-col>
-                    </el-row>
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        Inherit v6 Prefixes
-                      </el-col>
-                      <el-col :span="20">
-                        {{ selectedNode.object.object.inherit_v6_prefixes }}
-                      </el-col>
-                    </el-row>
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        Manifest
-                      </el-col>
-                      <el-col :span="20">
-                        <a :href="selectedNode.object.object.manifest">{{
-                          selectedNode.object.object.manifest
-                        }}</a>
-                      </el-col>
-                    </el-row>
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        Pubpoint
-                      </el-col>
-                      <el-col :span="20">
-                        <a :href="selectedNode.object.object.pubpoint">{{
-                          selectedNode.object.object.pubpoint
-                        }}</a>
-                      </el-col>
-                    </el-row>
-                    <el-row v-if="selectedNode.object.objecttype === 'CER'">
-                      <el-col :span="4">
-                        RRDP notify
-                      </el-col>
-                      <el-col :span="20">
-                        <a :href="selectedNode.object.object.rrdp_notify">{{
-                          selectedNode.object.object.rrdp_notify
-                        }}</a>
-                      </el-col>
-                    </el-row>
+                    <div v-if="selectedNode.object.objecttype === 'CER'">
+                      <div v-if="currentObject && currentObject.data && currentObject.data.object">
+                        <el-row>
+                          <el-col :span="4">
+                            Invalid before
+                          </el-col>
+                          <el-col :span="20">
+                            {{ getTimestamp(currentObject.data.object.notBefore) }}
+                            <span class="timestamp-relative">{{
+                              fromNow(currentObject.data.object.notBefore)
+                            }}</span>
+                          </el-col>
+                        </el-row>
+                        <el-row>
+                          <el-col :span="4">
+                            Invalid after
+                          </el-col>
+                          <el-col :span="20">
+                            {{ getTimestamp(currentObject.data.object.notAfter) }}
+                            <span class="timestamp-relative">{{
+                              fromNow(currentObject.data.object.notAfter)
+                            }}</span>
+                          </el-col>
+                        </el-row>
+                      </div>
+                      <el-row>
+                        <el-col :span="4">
+                          Inherit ASNs
+                        </el-col>
+                        <el-col :span="20">
+                          {{ selectedNode.object.object.inherit_ASNs }}
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="4">
+                          Inherit v4 Prefixes
+                        </el-col>
+                        <el-col :span="20">
+                          {{ selectedNode.object.object.inherit_v4_prefixes }}
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="4">
+                          Inherit v6 Prefixes
+                        </el-col>
+                        <el-col :span="20">
+                          {{ selectedNode.object.object.inherit_v6_prefixes }}
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="4">
+                          Manifest
+                        </el-col>
+                        <el-col :span="20">
+                          <a :href="selectedNode.object.object.manifest">{{
+                            selectedNode.object.object.manifest
+                          }}</a>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="4">
+                          Pubpoint
+                        </el-col>
+                        <el-col :span="20">
+                          <a :href="selectedNode.object.object.pubpoint">{{
+                            selectedNode.object.object.pubpoint
+                          }}</a>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="4">
+                          RRDP notify
+                        </el-col>
+                        <el-col :span="20">
+                          <a :href="selectedNode.object.object.rrdp_notify">{{
+                            selectedNode.object.object.rrdp_notify
+                          }}</a>
+                        </el-col>
+                      </el-row>
+                    </div>
+
                     <div
                       v-if="
                         selectedNode.object.objecttype === 'CRL' &&
@@ -210,8 +237,8 @@
                         </el-col>
                       </el-row>
                     </div>
-                    <el-row
-                      align="middle"
+
+                    <div
                       v-if="
                         selectedNode.object.objecttype === 'MFT' &&
                           currentObject &&
@@ -219,41 +246,69 @@
                           currentObject.data.object
                       "
                     >
-                      <el-col :span="4" class="table-label">
-                        Files
-                      </el-col>
-                      <el-col :span="20">
-                        <el-input v-model="fileSearch" size="mini" placeholder="Search files..." />
-                        <el-table
-                          size="small"
-                          v-if="currentObject.data.object && currentObject.data.object.files"
-                          :data="
-                            currentObject.data.object.files
-                              .filter(f => f.toLowerCase().indexOf(fileSearch.toLowerCase()) > -1)
-                              .slice(0, 30)
-                          "
-                          style="width: 100%"
-                          height="220"
-                          :show-header="false"
-                        >
-                          <el-table-column label="File"
-                            ><template slot-scope="scope">{{
-                              scope.row
-                            }}</template></el-table-column
+                      <el-row>
+                        <el-col :span="4">
+                          Last update
+                        </el-col>
+                        <el-col :span="20">
+                          {{ getTimestamp(currentObject.data.object.this_update) }}
+                          <span class="timestamp-relative">{{
+                            fromNow(currentObject.data.object.this_update)
+                          }}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="4">
+                          Next update
+                        </el-col>
+                        <el-col :span="20">
+                          {{ getTimestamp(currentObject.data.object.next_update) }}
+                          <span class="timestamp-relative">{{
+                            fromNow(currentObject.data.object.next_update)
+                          }}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row align="middle">
+                        <el-col :span="4" class="table-label">
+                          Files
+                        </el-col>
+                        <el-col :span="20">
+                          <el-input
+                            v-model="fileSearch"
+                            size="mini"
+                            placeholder="Search files..."
+                          />
+                          <el-table
+                            size="small"
+                            v-if="currentObject.data.object && currentObject.data.object.files"
+                            :data="
+                              currentObject.data.object.files
+                                .filter(f => f.toLowerCase().indexOf(fileSearch.toLowerCase()) > -1)
+                                .slice(0, 30)
+                            "
+                            style="width: 100%"
+                            height="220"
+                            :show-header="false"
                           >
-                        </el-table>
-                        <div
-                          v-if="
-                            currentObject.data.object &&
-                              currentObject.data.object.files &&
-                              currentObject.data.object.files.length > 30
-                          "
-                          class="and-more"
-                        >
-                          and {{ currentObject.data.object.files.length - 30 }} more...
-                        </div>
-                      </el-col>
-                    </el-row>
+                            <el-table-column label="File"
+                              ><template slot-scope="scope">{{
+                                scope.row
+                              }}</template></el-table-column
+                            >
+                          </el-table>
+                          <div
+                            v-if="
+                              currentObject.data.object &&
+                                currentObject.data.object.files &&
+                                currentObject.data.object.files.length > 30
+                            "
+                            class="and-more"
+                          >
+                            and {{ currentObject.data.object.files.length - 30 }} more...
+                          </div>
+                        </el-col>
+                      </el-row>
+                    </div>
                     <el-row
                       v-if="
                         selectedNode.object.remark_counts_me.WARN ||
@@ -819,7 +874,7 @@ export default {
       this.doSearch(this.search);
     },
     getTimestamp(timestamp) {
-      return moment.utc(timestamp).format();
+      return moment.utc(timestamp).format() + " UTC";
     },
     fromNow(timestamp) {
       return moment.utc(timestamp).fromNow();
