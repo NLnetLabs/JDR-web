@@ -134,6 +134,82 @@
                         }}</a>
                       </el-col>
                     </el-row>
+                    <div
+                      v-if="
+                        selectedNode.object.objecttype === 'CRL' &&
+                          currentObject &&
+                          currentObject.data &&
+                          currentObject.data.object
+                      "
+                    >
+                      <el-row>
+                        <el-col :span="4">
+                          Last update
+                        </el-col>
+                        <el-col :span="20">
+                          {{ getTimestamp(currentObject.data.object.thisUpdate) }}
+                          <span class="timestamp-relative">{{
+                            fromNow(currentObject.data.object.thisUpdate)
+                          }}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="4">
+                          Next update
+                        </el-col>
+                        <el-col :span="20">
+                          {{ getTimestamp(currentObject.data.object.nextUpdate) }}
+                          <span class="timestamp-relative">{{
+                            fromNow(currentObject.data.object.nextUpdate)
+                          }}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row align="middle">
+                        <el-col :span="4" class="table-label">
+                          Revoked Serials
+                        </el-col>
+                        <el-col :span="20">
+                          <el-input
+                            v-model="serialsSearch"
+                            size="mini"
+                            placeholder="Search serials..."
+                          />
+                          <el-table
+                            size="small"
+                            v-if="
+                              currentObject.data.object && currentObject.data.object.revoked_serials
+                            "
+                            :data="
+                              currentObject.data.object.revoked_serials
+                                .filter(
+                                  s =>
+                                    (s + '').toLowerCase().indexOf(serialsSearch.toLowerCase()) > -1
+                                )
+                                .slice(0, 30)
+                            "
+                            style="width: 100%"
+                            height="220"
+                            :show-header="false"
+                          >
+                            <el-table-column label="Serial"
+                              ><template slot-scope="scope">{{
+                                scope.row
+                              }}</template></el-table-column
+                            >
+                          </el-table>
+                          <div
+                            v-if="
+                              currentObject.data.object &&
+                                currentObject.data.object.revoked_serials &&
+                                currentObject.data.object.revoked_serials.length > 30
+                            "
+                            class="and-more"
+                          >
+                            and {{ currentObject.data.object.revoked_serials.length - 30 }} more...
+                          </div>
+                        </el-col>
+                      </el-row>
+                    </div>
                     <el-row
                       align="middle"
                       v-if="
@@ -384,7 +460,11 @@
                   <el-col :span="12">
                     <el-row>
                       <el-col :span="24">
-                        <ASN1 :currentObject="currentObject" :objectTree="objectTree" :defaultProps="defaultProps" ></ASN1>
+                        <ASN1
+                          :currentObject="currentObject"
+                          :objectTree="objectTree"
+                          :defaultProps="defaultProps"
+                        ></ASN1>
                       </el-col>
                     </el-row>
                   </el-col>
@@ -442,7 +522,11 @@
                   <el-col :span="12">
                     <el-row>
                       <el-col :span="24">
-                        <ASN1 :currentObject="currentObject" :objectTree="objectTree" :defaultProps="defaultProps" ></ASN1>
+                        <ASN1
+                          :currentObject="currentObject"
+                          :objectTree="objectTree"
+                          :defaultProps="defaultProps"
+                        ></ASN1>
                       </el-col>
                     </el-row>
                   </el-col>
@@ -463,10 +547,12 @@ import APIService from "@/services/APIService.js";
 const isIp = require("is-ip");
 const cidrRegex = require("cidr-regex");
 import router from "@/router";
+import * as moment from "moment";
 
 export default {
   components: {
-    TreeChart, ASN1
+    TreeChart,
+    ASN1
   },
   data() {
     return {
@@ -491,7 +577,8 @@ export default {
         FILENAME: "filename"
       },
       isPanning: false,
-      fileSearch: ""
+      fileSearch: "",
+      serialsSearch: ""
     };
   },
   computed: {
@@ -730,6 +817,12 @@ export default {
       }
       localStorage.setItem("jdr_last_search", this.search);
       this.doSearch(this.search);
+    },
+    getTimestamp(timestamp) {
+      return moment.utc(timestamp).format();
+    },
+    fromNow(timestamp) {
+      return moment.utc(timestamp).fromNow();
     }
   }
 };
@@ -819,5 +912,10 @@ h4 {
   color: #bbbbbb;
   padding: 1rem;
   font-size: 0.8rem;
+}
+
+.timestamp-relative {
+  color: #bbbbbb;
+  padding-left: 1rem;
 }
 </style>
