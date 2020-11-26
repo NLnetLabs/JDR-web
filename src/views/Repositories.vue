@@ -12,7 +12,7 @@
           @panend="onPanEnd"
         >
           <div>
-            <TreeChart :json="repositories.data" @click-node="clickNode" />
+            <TreeChart :json="repositories.data" @click-node="clickNode" style="padding-top: 1rem" />
           </div>
         </panZoom>
       </div>

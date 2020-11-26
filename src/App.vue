@@ -218,4 +218,18 @@ a {
     padding-right: 1rem;
   }
 }
+
+.el-card {
+  border: none !important;
+  .el-card__body {
+    padding: 0 !important;
+  }
+}
+
+.vue-pan-zoom-item {
+  cursor: move;
+  margin-bottom: 2rem;
+  background: #F6F6F6;
+  border-radius: 4px;
+}
 </style>

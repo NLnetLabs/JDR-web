@@ -52,7 +52,7 @@
               @panend="onPanEnd"
               v-if="treeData !== null && treeData.name"
             >
-              <TreeChart :json="treeData" :selectedNode="selectedNode" @click-node="clickNode" />
+              <TreeChart :json="treeData" :selectedNode="selectedNode" @click-node="clickNode" style="padding-top: 1rem" />
             </panZoom>
           </el-col>
         </el-row>
