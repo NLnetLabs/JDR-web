@@ -4,7 +4,7 @@ Vue.mixin({
   methods: {
     getNodeImage: function(n, pubpoint) {
       const name = n.toLowerCase();
-      if (name === "root" || name === "green") {
+      if (name === "root") {
         return require("@/assets/images/green.svg");
       } else if (name === "white") {
         return require("@/assets/images/white.svg");
@@ -19,8 +19,13 @@ Vue.mixin({
       } else if (name.indexOf("arin") > -1) {
         return require("@/assets/images/arin.svg");
       }
+
       if (pubpoint) {
-        return require("@/assets/images/switch.svg");  
+        return require("@/assets/images/switch.svg");
+      }
+
+      if (name === "green") {
+        return require("@/assets/images/green.svg");
       }
       return require("@/assets/images/lightgreen.svg");
     }

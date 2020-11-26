@@ -771,7 +771,7 @@ export default {
               if (child.object && child.object.objecttype === "ROA") {
                 child.class = ["clickable"];
                 if (child.name === self.selectedNode.name) {
-                  child.image_url = self.getNodeImage("green");
+                  child.image_url = self.getNodeImage("green", child.newPubpoint);
                 } else {
                   child.image_url = self.getNodeImage("white");
                 }
@@ -780,7 +780,8 @@ export default {
               } else if (!child.children || child.children.length === 0) {
                 child.class = ["clickable"];
                 if (!self.selectedNode || child.name === self.selectedNode.name) {
-                  child.image_url = self.getNodeImage("green");
+                  console.log('popta', child.newPubpoint)
+                  child.image_url = self.getNodeImage("green", child.newPubpoint);
                 } else {
                   child.image_url = self.getNodeImage("white");
                 }
