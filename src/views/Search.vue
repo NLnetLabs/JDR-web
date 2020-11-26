@@ -52,7 +52,12 @@
               @panend="onPanEnd"
               v-if="treeData !== null && treeData.name"
             >
-              <TreeChart :json="treeData" :selectedNode="selectedNode" @click-node="clickNode" style="padding-top: 1rem" />
+              <TreeChart
+                :json="treeData"
+                :selectedNode="selectedNode"
+                @click-node="clickNode"
+                style="padding-top: 1rem"
+              />
             </panZoom>
           </el-col>
         </el-row>
@@ -780,7 +785,6 @@ export default {
               } else if (!child.children || child.children.length === 0) {
                 child.class = ["clickable"];
                 if (!self.selectedNode || child.name === self.selectedNode.name) {
-                  console.log('popta', child.newPubpoint)
                   child.image_url = self.getNodeImage("green", child.newPubpoint);
                 } else {
                   child.image_url = self.getNodeImage("white");
@@ -814,6 +818,7 @@ export default {
     },
     getObject(filename) {
       APIService.getObject(filename).then(response => {
+        this.updateLastUpdate(response);
         this.currentObject = response.data;
       });
     },
@@ -842,6 +847,7 @@ export default {
       if ((isIp(search) || cidrRegex({ exact: true }).test(search)) && !forceFilename) {
         this.searchType = this.SEARCH_TYPES.PREFIX;
         APIService.getPrefix(search).then(response => {
+          this.updateLastUpdate(response);
           selectNode(response);
         });
       } else if (
@@ -852,11 +858,13 @@ export default {
       ) {
         this.searchType = this.SEARCH_TYPES.ASN;
         APIService.getASN(search).then(response => {
+          this.updateLastUpdate(response);
           selectNode(response);
         });
       } else {
         this.searchType = this.SEARCH_TYPES.FILENAME;
         APIService.getFilename(encodeURIComponent(search)).then(response => {
+          this.updateLastUpdate(response);
           selectNode(response);
         });
       }
@@ -879,6 +887,11 @@ export default {
     },
     fromNow(timestamp) {
       return moment.utc(timestamp).fromNow();
+    },
+    updateLastUpdate(response) {
+      if (response.data && response.data.last_update) {
+        this.$emit("update-last", response.data.last_update);
+      }
     }
   }
 };

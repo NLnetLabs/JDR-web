@@ -10,7 +10,7 @@
               </div>
             </router-link>
           </el-col>
-          <el-col :span="14"
+          <el-col :span="12"
             ><el-menu
               :router="true"
               :default-active="activeIndex"
@@ -28,15 +28,19 @@
             </el-menu>
             &nbsp;</el-col
           >
-          <el-col :span="6">
+          <el-col :span="8">
             <el-menu
               mode="horizontal"
               background-color="#92bd11"
               text-color="#fff"
               active-text-color="#fff"
+              default-active=""
             >
               <el-menu-item @click="showHelp = true" class="help-menu">
                 <i class="el-icon-help"></i>
+              </el-menu-item>
+              <el-menu-item class="help-menu" disabled v-if="lastUpdate" :title="fromNow(lastUpdate)">
+                Last update {{ getTimestamp(lastUpdate) }}
               </el-menu-item>
             </el-menu>
           </el-col>
@@ -44,7 +48,7 @@
       </el-header>
 
       <el-main>
-        <router-view />
+        <router-view v-on:update-last="updateLastUpdate" />
       </el-main>
 
       <el-footer height="40px">
@@ -100,11 +104,14 @@
 </template>
 
 <script>
+import * as moment from "moment";
+
 export default {
   data() {
     return {
       activeIndex: "0",
-      showHelp: false
+      showHelp: false,
+      lastUpdate: ""
     };
   },
   watch: {
@@ -119,6 +126,15 @@ export default {
   methods: {
     getActiveIndex(path) {
       return "" + (["repositories"].indexOf(path) + 1);
+    },
+    getTimestamp(timestamp) {
+      return moment.utc(timestamp).format() + " UTC";
+    },
+    fromNow(timestamp) {
+      return moment.utc(timestamp).fromNow();
+    },
+    updateLastUpdate(timestamp) {
+      this.lastUpdate = timestamp;
     }
   }
 };
@@ -230,5 +246,9 @@ a {
   cursor: move;
   background: #F6F6F6;
   border-radius: 4px;
+}
+
+.is-disabled, .el-collapse-item.is-disabled .el-collapse-item__header {
+  cursor: default !important;
 }
 </style>

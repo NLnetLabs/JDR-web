@@ -148,6 +148,7 @@ export default {
     loadRepositories() {
       this.loading = true;
       APIService.getRepositoriesStatus().then(response => {
+        this.$emit('update-last', response.data.last_update);
         this.rawRepositoriesStatus = response.data.data;
         APIService.getRepositories().then(response => {
           this.loading = false;
