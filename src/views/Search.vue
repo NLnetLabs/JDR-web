@@ -77,8 +77,11 @@
         <el-row>
           <el-col :span="24">
             <div v-if="selectedNode">
-              <h4>{{ selectedNode.name }}</h4>
-
+              <h4>
+                {{ selectedNode.name }}<br>
+                <span class="filename" v-if="currentObject && currentObject.data">{{ currentObject.data.path }}/{{ currentObject.data.filename }}</span>
+              </h4>
+              
               <div
                 class="container"
                 v-if="selectedNode.object.objecttype !== 'ROA' && selectedNode.object.object"
@@ -1022,5 +1025,10 @@ h4 {
 .timestamp-relative {
   color: #bbbbbb;
   padding-left: 1rem;
+}
+
+.filename {
+  color: #bbbbbb;
+  font-size: 0.8rem;
 }
 </style>
