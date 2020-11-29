@@ -7,16 +7,25 @@ import i18n from "./i18n";
 import(/* webpackPreload: true */ "typeface-lato/index.css");
 import(/* webpackPreload: true */ "typeface-source-code-pro/index.css");
 
-import JsonViewer from 'vue-json-viewer';
-Vue.use(JsonViewer)
+import JsonViewer from "vue-json-viewer";
+Vue.use(JsonViewer);
 
-import panZoom from 'vue-panzoom'
+import panZoom from "vue-panzoom";
 Vue.use(panZoom);
 
-import textMiddleEllipsis from 'vue-text-middle-ellipsis';
+import textMiddleEllipsis from "vue-text-middle-ellipsis";
 Vue.use(textMiddleEllipsis);
 
-Vue.config.productionTip = false;
+import VueMatomo from "vue-matomo";
+Vue.use(VueMatomo, {
+  host: "//webstats.aws.nlnetlabs.nl/",
+  siteId: 4,
+  router: router,
+  enableHeartBeatTimer: true,
+  preInitActions: []
+});
+
+Vue.config.productionTip = true;
 
 new Vue({
   router,

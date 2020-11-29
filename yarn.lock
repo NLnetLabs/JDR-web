@@ -8580,6 +8580,11 @@ vue-loader@^15.7.0:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
+vue-matomo@^3.14.0-0:
+  version "3.14.0-0"
+  resolved "https://registry.yarnpkg.com/vue-matomo/-/vue-matomo-3.14.0-0.tgz#f8e668c26ec1f2f7b4498f758edfb7c387259735"
+  integrity sha512-i1IkZGSXNY84zg1gVU8TOuaqajYDWQYl4Vs7M1mEb21cNhlMZKUxxgElvj+xmv7ytYUc/6ekZbxIS+y6W4qTMQ==
+
 vue-panzoom@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vue-panzoom/-/vue-panzoom-1.1.2.tgz#55e784a70491675a1b94b24c93d035e101eced26"
