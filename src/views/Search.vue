@@ -78,10 +78,12 @@
           <el-col :span="24">
             <div v-if="selectedNode">
               <h4>
-                {{ selectedNode.name }}<br>
-                <span class="filename" v-if="currentObject && currentObject.data">{{ currentObject.data.path }}/{{ currentObject.data.filename }}</span>
+                {{ selectedNode.name }}<br />
+                <span class="filename" v-if="currentObject && currentObject.data"
+                  >{{ currentObject.data.path }}/{{ currentObject.data.filename }}</span
+                >
               </h4>
-              
+
               <div
                 class="container"
                 v-if="selectedNode.object.objecttype !== 'ROA' && selectedNode.object.object"
@@ -300,9 +302,13 @@
                             :show-header="false"
                           >
                             <el-table-column label="File"
-                              ><template slot-scope="scope">{{
-                                scope.row
-                              }}</template></el-table-column
+                              ><template slot-scope="scope"
+                                ><a
+                                  href="javascript: void(0)"
+                                  @click="navigateTo(currentObject.data.path + '/' + scope.row)"
+                                  >{{ scope.row }}</a
+                                ></template
+                              ></el-table-column
                             >
                           </el-table>
                           <div
@@ -931,6 +937,10 @@ export default {
       if (this && this.tree && this.tree.children) {
         traverse(this.tree.children);
       }
+    },
+    navigateTo(filename) {
+      this.search = filename;
+      this.searchResource();
     }
   }
 };
