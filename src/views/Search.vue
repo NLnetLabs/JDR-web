@@ -139,6 +139,86 @@
                           {{ selectedNode.object.object.inherit_v6_prefixes }}
                         </el-col>
                       </el-row>
+                      <el-row
+                        align="middle"
+                        v-if="currentObject && currentObject.data && currentObject.data.object"
+                      >
+                        <el-col :span="4" class="table-label">
+                          Resources
+                        </el-col>
+                        <el-col :span="20">
+                          <el-input
+                            v-model="resourcesSearch"
+                            size="mini"
+                            placeholder="Search resources..."
+                          />
+                          <el-table
+                            size="small"
+                            v-if="
+                              currentObject.data.object &&
+                                (currentObject.data.object.resources_v4 ||
+                                  currentObject.data.object.resources_v6)
+                            "
+                            :data="
+                              transformResources(
+                                currentObject.data.object.resources_v4,
+                                currentObject.data.object.resources_v6
+                              )
+                                .filter(
+                                  s =>
+                                    (s.resource + '')
+                                      .toLowerCase()
+                                      .indexOf(resourcesSearch.toLowerCase()) > -1
+                                )
+                                .slice(0, 300)
+                            "
+                            style="width: 100%"
+                            height="220"
+                            :show-header="false"
+                          >
+                            <el-table-column label="Resource"
+                              ><template slot-scope="scope">{{
+                                scope.row.resource
+                              }}</template></el-table-column
+                            >
+                            <el-table-column label="ROAs"
+                              ><template slot-scope="scope">
+                                <span v-if="scope.row.roas && scope.row.roas.length"
+                                  >ROAs:
+                                  <span v-for="(r, idx) in scope.row.roas" :key="idx"
+                                    ><a
+                                      :href="'#/search/' + encodeURIComponent(r)"
+                                      @click="preventAndSearch(r, $event)"
+                                      >{{ idx + 1 }}</a
+                                    >&nbsp;&nbsp;</span
+                                  >
+                                </span>
+                              </template></el-table-column
+                            >
+                          </el-table>
+                          <div
+                            v-if="
+                              currentObject.data.object &&
+                                (currentObject.data.object.resources_v4 ||
+                                  currentObject.data.object.resources_v6) &&
+                                transformResources(
+                                  currentObject.data.object.resources_v4,
+                                  currentObject.data.object.resources_v6
+                                ).length > 300
+                            "
+                            class="and-more"
+                          >
+                            and
+                            {{
+                              transformResources(
+                                currentObject.data.object.resources_v4,
+                                currentObject.data.object.resources_v6
+                              ).length - 300
+                            }}
+                            more...
+                          </div>
+                        </el-col>
+                      </el-row>
                       <el-row>
                         <el-col :span="4">
                           Manifest
@@ -648,7 +728,8 @@ export default {
       },
       isPanning: false,
       fileSearch: "",
-      serialsSearch: ""
+      serialsSearch: "",
+      resourcesSearch: ""
     };
   },
   computed: {
@@ -941,6 +1022,21 @@ export default {
     navigateTo(filename) {
       this.search = filename;
       this.searchResource();
+    },
+    transformResources(v4, v6) {
+      const res = [];
+      v4.concat(v6).forEach(r => {
+        res.push({
+          resource: Object.keys(r)[0],
+          roas: r[Object.keys(r)[0]]
+        });
+      });
+      return res;
+    },
+    preventAndSearch(object, e) {
+      e.preventDefault();
+      this.search = object;
+      this.doSearch(this.search);
     }
   }
 };
