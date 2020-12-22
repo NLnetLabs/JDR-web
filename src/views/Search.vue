@@ -226,8 +226,14 @@
                         <el-col :span="20">
                           {{ getManifestRoot(selectedNode.object.object.manifest) }}
                           <a
-                            href="javascript: void(0)"
-                            @click="loadManifest(selectedNode.object.object.manifest)"
+                            :href="
+                              '#/search/' +
+                                encodeURIComponent(
+                                  getManifestFromRsync(selectedNode.object.object.manifest).object
+                                    .filename
+                                )
+                            "
+                            @click="loadManifest(selectedNode.object.object.manifest, $event)"
                             >{{ selectedNode.object.object.manifest.split("/").pop() }}</a
                           >
                         </el-col>
@@ -384,8 +390,8 @@
                             <el-table-column label="File"
                               ><template slot-scope="scope"
                                 ><a
-                                  href="javascript: void(0)"
-                                  @click="navigateTo(currentObject.data.path + '/' + scope.row)"
+                                  :href="'#/search/' + encodeURIComponent(currentObject.data.path + '/' + scope.row)"
+                                  @click="navigateTo(currentObject.data.path + '/' + scope.row, $event)"
                                   >{{ scope.row }}</a
                                 ></template
                               ></el-table-column
@@ -897,8 +903,20 @@ export default {
                 }
                 child.siblings = newMates;
                 if (!self.selectedNode) {
-                  self.selectedNode = child;
-                  self.getObject(child.object.filename);
+                  let hasBeenSelected = false;
+                  if (child.object.filename !== self.search) {
+                    child.siblings.forEach(s => {
+                      if (s.object.filename === self.search) {
+                        self.selectedNode = s;
+                        self.getObject(s.object.filename);
+                        hasBeenSelected = true;
+                      }
+                    });
+                  }
+                  if (!hasBeenSelected) {
+                    self.selectedNode = child;
+                    self.getObject(child.object.filename);
+                  }
                 }
               }
             });
@@ -990,22 +1008,19 @@ export default {
       parts.pop();
       return parts.join("/") + "/";
     },
-    loadManifest(rsyncUrl) {
-      const self = this;
+    getManifestFromRsync(rsyncUrl) {
       const mft = rsyncUrl.split("/").pop();
-      function loadMft(node) {
-        self.clickNode(node);
-      }
+      let rMft = "";
       function traverse(children) {
         if (children && children.length) {
           children.forEach(child => {
             if (child.name === mft) {
-              loadMft(child);
+              rMft = child;
             }
             if (child.mates) {
               child.mates.forEach(m => {
                 if (m.name === mft) {
-                  loadMft(m);
+                  rMft = m;
                 }
               });
             }
@@ -1017,9 +1032,15 @@ export default {
       }
       if (this && this.tree && this.tree.children) {
         traverse(this.tree.children);
+        return rMft;
       }
     },
-    navigateTo(filename) {
+    loadManifest(rsyncUrl, e) {
+      e.preventDefault();
+      this.clickNode(this.getManifestFromRsync(rsyncUrl));
+    },
+    navigateTo(filename, e) {
+      e.preventDefault();
       this.search = filename;
       this.searchResource();
     },
