@@ -95,17 +95,13 @@ export default {
       return shouldIgnore;
     },
     getStatusError(name) {
-      return this.rawRepositoriesStatus[name].ping4.global_alert
-        ? this.rawRepositoriesStatus[name].ping4.total_alerts + " alerts on ping v4"
-        : "" + " " + this.rawRepositoriesStatus[name].ping6.global_alert
-        ? this.rawRepositoriesStatus[name].ping6.total_alerts + " alerts on ping v6"
-        : "";
+        return "Possible network issues for " + 
+        (this.rawRepositoriesStatus[name]).map( (e) => e.proto).join(", ");
     },
     setAdditionalInfo(node) {
       if (this.rawRepositoriesStatus[node.name]) {
         if (
-          this.rawRepositoriesStatus[node.name].ping4.total_alerts > 7 ||
-          this.rawRepositoriesStatus[node.name].ping6.total_alerts > 7
+          this.rawRepositoriesStatus[node.name].length
         ) {
           node.additionalInfoSeverity = "warning";
           node.additionalInfo = this.getStatusError(node.name);
