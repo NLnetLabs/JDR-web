@@ -181,6 +181,20 @@
                                 scope.row.resource
                               }}</template></el-table-column
                             >
+                            <el-table-column label="CERs"
+                              ><template slot-scope="scope">
+                                <span v-if="scope.row.cers && scope.row.cers.length"
+                                  >CERs:
+                                  <span v-for="(r, idx) in scope.row.cers" :key="idx"
+                                    ><a
+                                      :href="'#/search/' + encodeURIComponent(r)"
+                                      @click="preventAndSearch(r, $event)"
+                                      >{{ idx + 1 }}</a
+                                    >&nbsp; </span
+                                  >
+                                </span>
+                              </template></el-table-column
+                            >
                             <el-table-column label="ROAs"
                               ><template slot-scope="scope">
                                 <span v-if="scope.row.roas && scope.row.roas.length"
@@ -190,7 +204,7 @@
                                       :href="'#/search/' + encodeURIComponent(r)"
                                       @click="preventAndSearch(r, $event)"
                                       >{{ idx + 1 }}</a
-                                    >&nbsp;&nbsp;</span
+                                    >&nbsp; </span
                                   >
                                 </span>
                               </template></el-table-column
@@ -1049,7 +1063,8 @@ export default {
       v4.concat(v6).forEach(r => {
         res.push({
           resource: Object.keys(r)[0],
-          roas: r[Object.keys(r)[0]]
+          roas: r[Object.keys(r)[0]].ROAs,
+          cers: r[Object.keys(r)[0]].CERs
         });
       });
       return res;
