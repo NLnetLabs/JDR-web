@@ -1122,6 +1122,13 @@ h4 {
     word-break: break-word;
   }
 }
+.el-table {
+  .cell {
+      span {
+        word-break: break-word;
+      }
+  }
+}
 .no-results {
   padding: 1rem;
   text-align: center;
