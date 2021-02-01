@@ -45,14 +45,16 @@
         </div>
 
         <el-row style="margin-bottom: 1rem">
-          <el-col :span="24" style="overflow: hidden">
+          <el-col :span="24" style="overflow: hidden" ref="treechartContainer">
             <panZoom
               :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }"
               @panstart="onPanStart"
               @panend="onPanEnd"
+              @init="onPanZoomInit"
               v-if="treeData !== null && treeData.name"
             >
               <TreeChart
+                ref="treechart"
                 :json="treeData"
                 :selectedNode="selectedNode"
                 @click-node="clickNode"
@@ -837,6 +839,11 @@ export default {
         this.serialsSearch = "";
         this.getObject(node.object.filename);
       }
+    },
+    onPanZoomInit(panzoomInstance) {
+      console.log(this.$refs["treechart"].$el.clientWidth)
+      console.log(this.$refs["treechartContainer"].$el.clientWidth)
+      panzoomInstance.moveBy((this.$refs["treechart"].$el.clientWidth/2 - this.$refs["treechartContainer"].$el.clientWidth/2)*-1, 0, true);
     },
     onPanStart() {
       this.isPanning = true;
