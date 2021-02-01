@@ -744,7 +744,8 @@ export default {
       SEARCH_TYPES: {
         PREFIX: "prefix",
         ASN: "asn",
-        FILENAME: "filename"
+        FILENAME: "filename",
+        NEW: "new since"
       },
       isPanning: false,
       fileSearch: "",
@@ -982,6 +983,13 @@ export default {
       ) {
         this.searchType = this.SEARCH_TYPES.ASN;
         APIService.getASN(search).then(response => {
+          this.updateLastUpdate(response);
+          selectNode(response);
+        });
+      } else if (search && search.toLowerCase().indexOf("new") === 0) {
+        this.searchType = this.SEARCH_TYPES.NEW;
+        const bits = search.split(" ");
+        APIService.getNewSince(bits[1],bits[2]).then(response => {
           this.updateLastUpdate(response);
           selectNode(response);
         });

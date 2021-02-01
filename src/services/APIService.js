@@ -23,5 +23,8 @@ export default {
   },
   getRepositoriesStats() {
     return apiClient.get("/api/v1/repostats");
+  },
+  getNewSince(minutes, filter) {
+    return apiClient.get("/api/v1/newsince/" + minutes + "/" + filter);
   }
 };
