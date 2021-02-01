@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card shadow="never">
+    <el-card shadow="never" ref="treechartContainer">
       <div class="text item">
         <div v-if="loading" class="no-results">
           <i class="el-icon-loading"></i>
@@ -10,10 +10,10 @@
           :options="{ minZoom: 0.2, maxZoom: 2, bounds: false, boundPadding: 0, beforeWheel }"
           @panstart="onPanStart"
           @panend="onPanEnd"
+          @init="onPanZoomInit"
+          v-if="repositories != null && repositories.name"
         >
-          <div>
-            <TreeChart :json="repositories.data" @click-node="clickNode" style="padding-top: 1rem" />
-          </div>
+          <TreeChart ref="treechart" :json="repositories" @click-node="clickNode" style="padding-top: 1rem" />
         </panZoom>
       </div>
     </el-card>
@@ -143,7 +143,7 @@ export default {
         }
       }
       traverse(tree);
-      return { data: tree };
+      return tree;
     },
     loadRepositories() {
       this.loading = true;
@@ -170,6 +170,11 @@ export default {
     },
     viewFile(row) {
       router.push("/search/" + row.url.split("/").pop());
+    },
+    onPanZoomInit(panzoomInstance) {
+      console.log(this.$refs["treechart"].$el.clientWidth)
+      console.log(this.$refs["treechartContainer"].$el.clientWidth)
+      panzoomInstance.moveBy((this.$refs["treechart"].$el.clientWidth/2 - this.$refs["treechartContainer"].$el.clientWidth/2)*-1, 0, true);
     },
     onPanStart() {
       this.isPanning = true;
