@@ -669,7 +669,7 @@
                         >
                           <el-table-column label="Prefix"
                             ><template slot-scope="scope"
-                              >{{ scope.row.prefix }}-{{ scope.row.maxlength }}</template
+                              >{{ scope.row }}</template
                             ></el-table-column
                           >
                         </el-table>
@@ -1062,9 +1062,9 @@ export default {
       const res = [];
       v4.concat(v6).forEach(r => {
         res.push({
-          resource: Object.keys(r)[0],
-          roas: r[Object.keys(r)[0]].ROAs,
-          cers: r[Object.keys(r)[0]].CERs
+          resource: r.prefix,
+          roas: r.ROAs,
+          cers: r.CERs
         });
       });
       return res;
