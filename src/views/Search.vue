@@ -240,8 +240,9 @@
                           Manifest
                         </el-col>
                         <el-col :span="20">
-                          {{ getManifestRoot(selectedNode.object.object.manifest) }}
-                          <a
+                          {{ getManifestRoot(selectedNode.object.object.manifest)
+                          }}<a
+                            v-if="getManifestFromRsync(selectedNode.object.object.manifest)"
                             :href="
                               '#/search/' +
                                 encodeURIComponent(
@@ -251,7 +252,10 @@
                             "
                             @click="loadManifest(selectedNode.object.object.manifest, $event)"
                             >{{ selectedNode.object.object.manifest.split("/").pop() }}</a
-                          >
+                            >
+                            <span v-else
+                            >{{ selectedNode.object.object.manifest.split("/").pop() }}
+                            </span>
                         </el-col>
                       </el-row>
                       <el-row>
