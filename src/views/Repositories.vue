@@ -19,27 +19,28 @@
     </el-card>
 
     <el-card shadow="never" style="margin-top: 2rem">
-      <el-collapse>
+    <h5>Errors/warnings:</h5>
+      <el-collapse v-model="openedRepos">
         <el-collapse-item
           v-for="(repo, index) in repositoriesStats.data"
           :key="index"
-          :name="index"
-          :disabled="repo[Object.keys(repo)[0]].remarks.length === 0"
+          :name="repo.repo"
+          :disabled="repo.remarks.length === 0"
         >
           <template slot="title">
-            <div :class="repo[Object.keys(repo)[0]].remarks.length > 0 ? 'danger' : 'all-good'">
-              <i class="el-icon-warning" v-if="repo[Object.keys(repo)[0]].remarks.length > 0"></i
+            <div :class="repo.remarks.length > 0 ? 'danger' : 'all-good'">
+              <i class="el-icon-warning" v-if="repo.remarks.length > 0"></i
               ><i
                 class="el-icon-success"
-                v-if="repo[Object.keys(repo)[0]].remarks.length === 0"
+                v-if="repo.remarks.length === 0"
               ></i>
             </div>
-            &nbsp; {{ Object.keys(repo)[0] }}
+            &nbsp; {{ repo.repo }}
           </template>
           <div>
             <el-table
               size="small"
-              :data="repo[Object.keys(repo)[0]].remarks"
+              :data="repo.remarks"
               style="width: 100%"
               :show-header="false"
             >
@@ -81,7 +82,8 @@ export default {
       rawRepositoriesStatus: null,
       repositoriesStats: {},
       repositories: {},
-      isPanning: false
+      isPanning: false,
+      openedRepos: [], // to open the el-collapse-items automatically
     };
   },
   created() {
@@ -155,6 +157,11 @@ export default {
 
       APIService.getRepositoriesStats().then(response => {
         this.repositoriesStats = response.data;
+        this.openedRepos = this.repositoriesStats.data.filter(e =>
+          e.remarks.length > 0
+        ).map(e =>
+          e.repo
+        );
       });
 
       return false;
