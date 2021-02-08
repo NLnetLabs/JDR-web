@@ -849,6 +849,7 @@ export default {
         if (node.object.objecttype !== "ROA") {
           this.selectedNode = node;
           this.treeData = this.getTreeData();
+          this.getObject(node.object.filename);
         } else {
           this.roas.forEach((r, i) => {
             if (node.object && r.name === node.object.name) {
@@ -859,7 +860,6 @@ export default {
         }
         this.fileSearch = "";
         this.serialsSearch = "";
-        this.getObject(node.object.filename);
       }
     },
     onPanZoomInit(panzoomInstance) {
@@ -875,6 +875,7 @@ export default {
     },
     clickTab() {
       this.selectedNode = this.roas[this.activeTab * 1];
+      this.getObject(this.selectedNode.filename);
       this.treeData = this.getTreeData();
     },
     getTreeData() {
