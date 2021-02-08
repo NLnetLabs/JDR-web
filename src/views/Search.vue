@@ -519,6 +519,16 @@
                           }}
                           EncodingIssue</el-tag
                         >
+                        <div
+                          class="error-tags"
+                          v-if="selectedNode.object.remarks"
+                        > 
+                          <el-tag
+                            :type="r.lvl == 'WARN' ? 'warning' : 'danger'"
+                            v-for="(r, idx) in selectedNode.object.remarks"
+                            :key="idx"
+                          >{{ r.msg }}</el-tag>
+                        </div>
                       </el-col>
                     </el-row>
                     <el-row
@@ -681,11 +691,19 @@
                         </el-table>
                       </el-col>
                     </el-row>
-                    <el-row align="middle">
+                    <el-row 
+                      v-if="selectedNode.remarks"
+                      align="middle"
+                      >
                       <el-col :span="4">
                         Remarks
                       </el-col>
                       <el-col :span="20">
+                        <el-tag type="danger"
+                          v-for="(r, idx) in selectedNode.remarks"
+                          :key="idx">
+                          {{ r.msg }}
+                        </el-tag>
                         <el-tag type="warning" v-if="selectedNode.remark_counts_me.WARN"
                           >{{ selectedNode.remark_counts_me.WARN }} WARNINGS</el-tag
                         >
