@@ -36,5 +36,14 @@ module.exports = {
   },
   chainWebpack: config => {
     config.optimization.delete("splitChunks");
+    config.output.filename("js/[name].[hash].js").end();
+
+    if (config.plugins.has("extract-css")) {
+      const extractCSSPlugin = config.plugin("extract-css");
+      extractCSSPlugin && extractCSSPlugin.tap(() => [{
+        filename: "css/[name].[hash].css",
+        chunkFilename: "css/[name].[hash].css"
+      }]);
+    }
   }
 };
