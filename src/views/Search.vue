@@ -863,8 +863,6 @@ export default {
       }
     },
     onPanZoomInit(panzoomInstance) {
-      console.log(this.$refs["treechart"].$el.clientWidth)
-      console.log(this.$refs["treechartContainer"].$el.clientWidth)
       panzoomInstance.moveBy((this.$refs["treechart"].$el.clientWidth/2 - this.$refs["treechartContainer"].$el.clientWidth/2)*-1, 0, true);
     },
     onPanStart() {
