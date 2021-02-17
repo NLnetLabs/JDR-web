@@ -80,6 +80,14 @@
           <el-col :span="24">
             <div v-if="selectedNode">
               <h4>
+                <el-tooltip :content="'Download '  + selectedNode.name">
+                <a
+                  v-if="currentObject && currentObject.data"
+                  :href="'/download' + currentObject.data.path + '/' + currentObject.data.filename"
+                  >
+                  <i class="el-icon-download"></i>
+                </a>
+                </el-tooltip>
                 {{ selectedNode.name }}<br />
                 <span class="filename" v-if="currentObject && currentObject.data"
                   >{{ currentObject.data.path }}/{{ currentObject.data.filename }}</span
