@@ -291,9 +291,9 @@
                           Last update
                         </el-col>
                         <el-col :span="20">
-                          {{ getTimestamp(currentObject.data.object.thisUpdate) }}
+                          {{ getTimestamp(currentObject.data.object.this_update) }}
                           <span class="timestamp-relative">{{
-                            fromNow(currentObject.data.object.thisUpdate)
+                            fromNow(currentObject.data.object.this_update)
                           }}</span>
                         </el-col>
                       </el-row>
@@ -302,9 +302,9 @@
                           Next update
                         </el-col>
                         <el-col :span="20">
-                          {{ getTimestamp(currentObject.data.object.nextUpdate) }}
+                          {{ getTimestamp(currentObject.data.object.next_update) }}
                           <span class="timestamp-relative">{{
-                            fromNow(currentObject.data.object.nextUpdate)
+                            fromNow(currentObject.data.object.next_update)
                           }}</span>
                         </el-col>
                       </el-row>
