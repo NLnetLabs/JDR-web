@@ -165,7 +165,7 @@
                           />
                           <el-table
                             size="small"
-                            v-if="currentObject.data.object.ASNs"
+                            v-if="currentObject.data && currentObject.data.object.ASNs"
                             :data="currentObject.data.object.ASNs
                               .filter( a => {
                                 if (!ASNSearch) {
@@ -1128,7 +1128,6 @@ export default {
     },
     doSearch(search, forceFilename = false, selected = undefined) {
       const self = this;
-      //console.log("doSearch, new search?", search !== this.searched);
       self.firstSearch = false;
       self.tree = {};
       self.selectedNode = null;

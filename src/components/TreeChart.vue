@@ -35,8 +35,8 @@
                 v-if="treeData.object"
                 :to="{name: 'search',
                     params: {
-                      search: $route.params.search,
-                      selected: treeData.object.filename
+                      search: $route.name == 'search' ? $route.params.search : treeData.object.filename,
+                      selected: $route.name == 'search' ?  treeData.object.filename : null
                     }
                   }"
                 @click.prevent
@@ -66,7 +66,7 @@
           >
             </el-row>
               <div class="name" @mouseup="$emit('click-node', treeData)">
-                <div :class="[{clickable: treeData.name !== 'root'}, name-container]">
+                <div class="name-container">
                   <el-row>
                     <el-col :span="($route.name == 'search') ? 21 : 24"
                       ><el-tooltip
@@ -80,8 +80,11 @@
                             class="node-filename node-filename-cer"
                             :to="{name: 'search',
                                 params: {
-                                  search: $route.params.search,
-                                  selected: treeData.object.filename
+                                  search: $route.name == 'search' ?
+                                  $route.params.search :
+                                  treeData.object.filename,
+                                  selected: $route.name == 'search' ?
+                                  treeData.object.filename : null
                                 }
                               }"
                             @click.prevent
