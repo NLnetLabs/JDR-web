@@ -141,6 +141,47 @@
                           {{ selectedNode.object.object.inherit_v6_prefixes }}
                         </el-col>
                       </el-row>
+                      <el-row>
+                        <el-col :span="4" class="table-label">
+                          ASNs
+                        </el-col>
+                        <el-col :span="20">
+                          <el-input
+                            v-model="ASNSearch"
+                            size="mini"
+                            placeholder="Search ASNs..."
+                          />
+                          <el-table
+                            size="small"
+                            v-if="currentObject.data.object.ASNs"
+                            :data="currentObject.data.object.ASNs
+                              .filter( a => {
+                                if (!ASNSearch) {
+                                  return true
+                                }
+                                if (a.asn) {
+                                    return a.asn == parseInt(ASNSearch)
+                                } else {
+                                  return a.first.asn <= parseInt(ASNSearch) && a.last.asn >= parseInt(ASNSearch)
+                                }
+                              }).slice(0, 300)
+                            "
+                            style="width: 100%"
+                            height="220"
+                            :show-header="false"
+                            >
+                              <el-table-column>
+                                <template slot-scope="scope"
+                                ><span  v-if="scope.row.asn">{{ scope.row.asn }}
+                                 </span>
+                                <span v-else>{{ scope.row.first.asn }} .. {{
+                                  scope.row.last.asn }}</span>
+                                </template>
+                              </el-table-column
+                              >
+                          </el-table>
+                        </el-col>
+                      </el-row>
                       <el-row
                         align="middle"
                         v-if="currentObject && currentObject.data && currentObject.data.object"
@@ -774,7 +815,8 @@ export default {
       isPanning: false,
       fileSearch: "",
       serialsSearch: "",
-      resourcesSearch: ""
+      resourcesSearch: "",
+      ASNSearch: ""
     };
   },
   computed: {
