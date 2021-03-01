@@ -13,7 +13,12 @@
           @init="onPanZoomInit"
           v-if="repositories != null && repositories.name"
         >
-          <TreeChart ref="treechart" :json="repositories" @click-node="clickNode" style="padding-top: 1rem" />
+          <TreeChart
+            ref="treechart"
+            :json="repositories"
+            @click-node="clickNode"
+            style="padding-top: 1rem"
+          />
         </panZoom>
       </div>
     </el-card>
@@ -124,7 +129,8 @@ export default {
         if (node.name !== "root") {
           node.class = ["clickable"];
         }
-        node.errors = node.object ? node.object.remark_counts_children.ERR : 0;
+        node.errors_self = node.object ? node.object.remark_counts_me.ERR : 0;
+        node.errors_children = node.object ? node.object.remark_counts_children.ERR : 0;
         let children = node.children;
         if (children && children.length) {
           children.forEach(child => {
@@ -133,7 +139,8 @@ export default {
             if (self.rawRepositoriesStatus) {
               self.setAdditionalInfo(child);
             }
-            child.errors = child.object ? child.object.remark_counts_children.ERR : 0;
+            child.errors_self = child.object ? child.object.remark_counts_me.ERR : 0;
+            child.errors_children = child.object ? child.object.remark_counts_children.ERR : 0;
             if (child.children && child.children.length) {
               traverse(child);
             }

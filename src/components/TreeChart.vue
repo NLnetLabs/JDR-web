@@ -9,7 +9,20 @@
         }"
       >
         <div :class="{ node: true }">
-          <div class="leaf" :class="Array.isArray(treeData.class) ? treeData.class : []">
+        <el-row>
+          <el-col :span="8"
+            ><el-tooltip
+              class="item"
+              effect="dark"
+              :content="treeData.additionalInfo"
+              placement="left"
+              v-if="treeData.additionalInfo"
+              ><div :class="treeData.additionalInfoSeverity" style="text-align: right">
+                <i class="el-icon-discover"></i></div></el-tooltip
+            >&nbsp;</el-col
+          >
+        <el-col :span="8"
+          ><div class="leaf" :class="Array.isArray(treeData.class) ? treeData.class : []">
             <el-tooltip
               class="item"
               effect="dark"
@@ -32,23 +45,30 @@
               </router-link>
               </div>
             </el-tooltip>
-
-            <div>
-              <div class="name">
-                <div class="name-container">
+            </div>
+          </el-col>
+          <el-col :span="8"
+            ><el-tag
+              size="mini"
+              type="warning"
+              v-if="$route.name == 'repositories' && treeData.warnings"
+              :title="treeData.warnings + ' warnings, see overview below'"
+              >{{ treeData.warnings }}</el-tag
+            >
+            <el-tag
+              size="mini"
+              type="danger"
+              v-if="$route.name == 'repositories' && (treeData.errors_self || treeData.errors_children)"
+              :title="(treeData.errors_self ? (treeData.errors_self + ' errors in self') : ''  + treeData.errors_children ?  (treeData.errors_children + ' errors in children') : '') + ', see overview below'"
+              >{{ treeData.errors_self || '0' }} {{ treeData.errors_children ?
+              '+' : '' }} {{ treeData.errors_children }}</el-tag
+            ></el-col
+          >
+            </el-row>
+              <div class="name" @mouseup="$emit('click-node', treeData)">
+                <div :class="[{clickable: treeData.name !== 'root'}, name-container]">
                   <el-row>
-                    <el-col :span="3"
-                      ><el-tooltip
-                        class="item"
-                        effect="dark"
-                        :content="treeData.additionalInfo"
-                        placement="left"
-                        v-if="treeData.additionalInfo"
-                        ><div :class="treeData.additionalInfoSeverity">
-                          <i class="el-icon-discover"></i></div></el-tooltip
-                      >&nbsp;</el-col
-                    >
-                    <el-col :span="18"
+                    <el-col :span="($route.name == 'search') ? 21 : 24"
                       ><el-tooltip
                         class="item"
                         effect="dark"
@@ -66,7 +86,11 @@
                               }"
                             @click.prevent
                             @mouseup="$emit('click-node', treeData)"
-                          ><div v-text-middle-ellipsis="4">{{ treeData.name }}</div>
+                          >
+                          <div v-if="$route.name == 'search' ||
+                            Array.isArray(treeData.siblings) && treeData.siblings.length"
+                            v-text-middle-ellipsis="10">{{ treeData.name }}</div>
+                          <div v-else>{{ treeData.name }}</div>
                           </router-link>
                           <div v-else-if="treeData.name === 'root'" >root</div>
                         </el-tooltip
@@ -88,10 +112,27 @@
                         >{{ treeData.errors }}</el-tag
                       ></el-col
                     >
+                    <el-col
+                      v-if="$route.name == 'search'"
+                      :span=3
+                      ><el-tag
+                          size="mini"
+                          type="warning"
+                          v-if="treeData.warnings"
+                          :title="treeData.warnings + ' warnings'"
+                          >{{ treeData.warnings }}</el-tag
+                          >
+                          <el-tag
+                            size="mini"
+                            type="danger"
+                            v-if="treeData.errors"
+                            :title="treeData.errors + ' errors'"
+                            >{{ treeData.errors }}</el-tag
+                          >
+                    </el-col>
                   </el-row>
                 </div>
               </div>
-            </div>
 
             <template v-if="Array.isArray(treeData.siblings) && treeData.siblings.length">
               <div
@@ -103,6 +144,7 @@
                   <div class="name leafname" @click="$emit('click-node', mate)">
                     <div class="name-container">
                       <el-row>
+                      <!--
                         <el-col :span="3"
                           ><el-tooltip
                             class="item"
@@ -114,7 +156,8 @@
                               <i class="el-icon-discover"></i></div></el-tooltip
                           >&nbsp;</el-col
                         >
-                        <el-col :span="18"
+                        -->
+                        <el-col :span="21"
                           ><el-tooltip
                             class="item"
                             effect="dark"
@@ -131,13 +174,13 @@
                                   }"
                                 @click.prevent
                                 @mouseup="$emit('click-node', mate)"
-                              ><div v-text-middle-ellipsis="4">{{ mate.name }}</div>
+                              ><div v-text-middle-ellipsis="10">{{ mate.name }}</div>
                               </router-link>
                             </el-tooltip
                           ></el-col
                         >
                         <el-col :span="3"
-                          >&nbsp;<el-tag
+                          ><el-tag
                             size="mini"
                             type="warning"
                             v-if="mate.warnings"
@@ -159,7 +202,6 @@
               </div>
             </template>
           </div>
-        </div>
         <div
           class="extend_handle"
           v-if="Array.isArray(treeData.children) && treeData.children.length > 4"
@@ -340,12 +382,13 @@ td {
   margin: 0 1em;
   box-sizing: border-box;
   text-align: center;
+  max-width: 10em;
 
   .leaf {
     position: relative;
     display: inline-block;
     z-index: 2;
-    width: 10em;
+    /*width: 7em;*/
     overflow: hidden;
 
     .avatar {
@@ -369,20 +412,19 @@ td {
       width: 100%;
       height: 100%;
     }
+  }
 
     .name {
       height: 1.6em;
       line-height: 1.6em;
       overflow: hidden;
-      font-size: 0.8rem;
-      /* width: 100%; */
+      font-size: 0.7rem;
+      /*width: 100%;*/
       width: 9rem;
-      min-width: 9rem;
-      padding-right: 1rem;
+      min-width: 7rem;
+      /* padding-right: 1rem; */
       white-space: nowrap;
-      padding-left: 0.5rem;
     }
-  }
 
   &.hasMate::after {
     content: "";
@@ -462,7 +504,7 @@ a.node-filename-cer {
 }
 
 .name-container {
-  width: 8rem;
+  /*width: 8rem;*/
   margin-left: auto;
   margin-right: auto;
 }
@@ -478,4 +520,11 @@ a.node-filename-cer {
 .info {
   color: #bbb;
 }
+
+.el-tag--mini {
+  font-size: 0.6rem;
+  padding: 0 0.1rem;
+  cursor: default;
+}
+
 </style>

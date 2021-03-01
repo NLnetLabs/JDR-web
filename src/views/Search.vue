@@ -44,8 +44,8 @@
           >
         </div>
 
-        <el-row style="margin-bottom: 1rem">
-          <el-col :span="24" style="overflow: hidden; max-height:400px;" ref="treechartContainer">
+        <el-row style="margin-bottom: 0.5rem">
+          <el-col :span="24" style="overflow: hidden; max-height: 400px" ref="treechartContainer">
             <panZoom
               :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }"
               @panstart="onPanStart"
@@ -1381,5 +1381,13 @@ h4 {
 .filename {
   color: #bbbbbb;
   font-size: 0.8rem;
+}
+
+.el-tabs__header {
+    margin: 0 0 5px !important;
+}
+.el-tabs__item {
+    height: 30px !important;
+    line-height: 30px !important;
 }
 </style>
