@@ -115,8 +115,17 @@ export default {
     };
   },
   watch: {
-    $route(to) {
-      this.activeIndex = this.getActiveIndex(to.name);
+    $route: {
+      handler(to) {
+        this.activeIndex = this.getActiveIndex(to.name);
+        if (to.name === 'repositories') {
+          document.title = "JDR: Repository overview";
+        } else if (to.name === 'search') {
+          // handled in Search.vue
+        } else {
+          document.title = "JDR";
+        }
+      }
     }
   },
   mounted: function() {

@@ -16,7 +16,7 @@ const router = new Router({
       component: Search
     },
     {
-      path: "/search/:search",
+      path: "/search/:search?/:selected?",
       name: "search",
       component: Search
     },

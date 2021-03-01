@@ -45,7 +45,7 @@
         </div>
 
         <el-row style="margin-bottom: 1rem">
-          <el-col :span="24" style="overflow: hidden" ref="treechartContainer">
+          <el-col :span="24" style="overflow: hidden; max-height:400px;" ref="treechartContainer">
             <panZoom
               :options="{ minZoom: 0.2, maxZoom: 2, beforeWheel }"
               @panstart="onPanStart"
@@ -70,8 +70,12 @@
           @tab-click="clickTab"
         >
           <el-tab-pane
+            :label="'Selected'"
+            :disabled=true
+          ></el-tab-pane>
+          <el-tab-pane
             v-for="(roa, index) in roas"
-            :key="index"
+            :key="index + 1"
             :label="'ROA ' + (index + 1)"
           ></el-tab-pane>
         </el-tabs>
@@ -753,6 +757,7 @@ export default {
       loading: false,
       tree: {},
       search: this.$route.params.search,
+      selected: this.$route.params.selected,
       searched: "",
       error: "",
       selectedNode: null,
@@ -776,6 +781,34 @@ export default {
       serialsSearch: "",
       resourcesSearch: ""
     };
+  },
+  watch: {
+    $route: {
+      handler(to, from) {
+          if (to.name === 'home') {
+            this.firstSearch = true;
+            this.searched = "";
+            this.selected = "";
+            this.selectedNode = null;
+            this.tree = {};
+            this.treeData = null;
+          } else if (to.name === 'search') {
+            if (to.params.selected){
+              this.selected = to.params.selected;
+              if (from.params.search === to.params.search) {
+                if (from.params.selected !== to.params.selected) {
+                  this.selectNode(to.params.selected);
+                }
+              } else {
+                this.doSearch(to.params.search, false, to.params.selected);
+              }
+            } else {
+              this.doSearch(to.params.search);
+            }
+          this.updatePageTitle();
+          }
+      }
+    }
   },
   computed: {
     objectTree() {
@@ -830,11 +863,17 @@ export default {
     window.addEventListener("beforeunload", this.beforeUnload);
     this.loading = false;
     if (this.search) {
-      this.doSearch(this.search);
+      if (this.selected){
+        this.doSearch(this.search, false, this.selected);
+      } else {
+        this.doSearch(this.search);
+      }
     } else if (localStorage.getItem("jdr_last_search")) {
       this.search = localStorage.getItem("jdr_last_search");
+      router.push({name: 'search', params: {'search': this.search}});
       this.doSearch(this.search);
     }
+    this.updatePageTitle();
   },
   methods: {
     beforeUnload() {
@@ -846,25 +885,36 @@ export default {
     },
     clickNode(node) {
       if (!this.isPanning) {
-        if (node.object.objecttype !== "ROA") {
-          this.selectedNode = node;
-          this.treeData = this.getTreeData();
-          this.getObject(node.object.filename);
-        } else {
-          this.roas.forEach((r, i) => {
-            if (node.object && r.name === node.object.name) {
-              this.activeTab = i + "";
-              this.clickTab();
+        router.push({name: 'search', params :
+            { 'search': this.$route.params.search,
+              'selected' : node.object.filename
             }
-          });
-        }
+        });
         this.fileSearch = "";
         this.serialsSearch = "";
       }
     },
+    updatePageTitle() {
+      if (this.search) {
+        document.title = "JDR:";
+        if (this.$data.searchType === this.$data.SEARCH_TYPES.FILENAME) {
+          let fn = this.$route.params.search;
+          fn = (fn.length > 30)
+            ? fn.substr(0, 10) + '...' + fn.substr(fn.length - 10, fn.length)
+            : fn;
+          document.title += ' ' + fn;
+        } else {
+          document.title += ' ' + this.$route.params.search;
+        } 
+
+        if (this.$data.selectedNode) {
+          document.title += ", " + this.$data.selectedNode.name;
+        }
+      } else {
+        document.title = "JDR - Jeu de Rules";
+      }
+    },
     onPanZoomInit(panzoomInstance) {
-      console.log(this.$refs["treechart"].$el.clientWidth)
-      console.log(this.$refs["treechartContainer"].$el.clientWidth)
       panzoomInstance.moveBy((this.$refs["treechart"].$el.clientWidth/2 - this.$refs["treechartContainer"].$el.clientWidth/2)*-1, 0, true);
     },
     onPanStart() {
@@ -874,9 +924,13 @@ export default {
       this.isPanning = false;
     },
     clickTab() {
-      this.selectedNode = this.roas[this.activeTab * 1];
-      this.getObject(this.selectedNode.filename);
-      this.treeData = this.getTreeData();
+      this.selectedNode = this.roas[this.activeTab * 1 - 1];
+      console.log(this.selectedNode);//.object.filename);
+      router.push({name: 'search', params : {
+          'search': this.$route.params.search,
+          'selected' : this.selectedNode.filename
+          }
+          });
     },
     getTreeData() {
       let tree = this.tree;
@@ -890,7 +944,7 @@ export default {
               newMates.push({
                 name: m.name,
                 object: m.object,
-                class: ["clickable"],
+                //class: ["clickable"],
                 image_url: self.getNodeImage(""),
                 warnings: m.object ? m.object.remark_counts_me.WARN : 0,
                 errors: m.object ? m.object.remark_counts_me.ERR : 0
@@ -905,7 +959,7 @@ export default {
           node.warnings = node.object ? node.object.remark_counts_me.WARN : 0;
           node.errors = node.object ? node.object.remark_counts_me.ERR : 0;
           if (node.name !== "root") {
-            node.class = ["clickable"];
+            //node.class = ["clickable"];
             if (node.selected) {
               node.class = ["selected"];
             }
@@ -917,7 +971,7 @@ export default {
                 traverse(child);
               }
               if (child.object && child.object.objecttype === "ROA") {
-                child.class = ["clickable"];
+                //child.class = ["clickable"];
                 if (child.name === self.selectedNode.name) {
                   child.image_url = self.getNodeImage("green", child.newPubpoint);
                 } else {
@@ -926,7 +980,7 @@ export default {
                 child.warnings = child.object.remark_counts_me.WARN;
                 child.errors = child.object.remark_counts_me.ERROR;
               } else if (!child.children || child.children.length === 0) {
-                child.class = ["clickable"];
+                //child.class = ["clickable"];
                 if (!self.selectedNode || child.name === self.selectedNode.name) {
                   child.image_url = self.getNodeImage("green", child.newPubpoint);
                 } else {
@@ -939,7 +993,7 @@ export default {
                     newMates.push({
                       name: m.name,
                       object: m.object,
-                      class: ["clickable"],
+                      //class: ["clickable"],
                       image_url: self.getNodeImage(""),
                       warnings: m.object ? m.object.remark_counts_me.WARN : 0,
                       errors: m.object ? m.object.remark_counts_me.ERROR : 0
@@ -977,8 +1031,54 @@ export default {
         this.currentObject = response.data;
       });
     },
-    doSearch(search, forceFilename = false) {
+    findNodeByFilename(filename) {
       const self = this;
+      let found = undefined;
+      function recurse(node) {
+        if (node.object) {
+          if (node.object.filename == filename) {
+            found = node;
+            return true;
+          }
+        }
+        if (!found && node.mates) {
+          node.mates.some(m => {
+            return recurse(m);
+          });
+        }
+        if (!found && node.children) {
+          node.children.some(c => {
+            return recurse(c);
+          });
+        }
+        return false;
+      }
+      recurse(self.tree);
+      return found;
+    },
+    selectNode() {
+      const self = this;
+      console.log("in selectNode(), self.selected: ", self.selected);
+      self.selectedNode = self.findNodeByFilename(self.selected);
+      console.log("self.selectedNode:", self.selectedNode);
+      self.treeData = self.getTreeData();
+      self.getObject(self.selectedNode.object.filename);
+          if (self.selectedNode.object.objecttype === "ROA") {
+            self.roas.some((r, idx) => {
+                if (r.filename == self.selectedNode.object.filename) {
+                  self.activeTab = idx + 1 + "";
+                  self.selectedNode = self.roas[self.activeTab * 1 - 1];
+                  //self.clickTab();
+                  return true;
+                }
+            });
+          } else {
+            self.activeTab = "0";
+          }
+    },
+    doSearch(search, forceFilename = false, selected = undefined) {
+      const self = this;
+      //console.log("doSearch, new search?", search !== this.searched);
       self.firstSearch = false;
       self.tree = {};
       self.selectedNode = null;
@@ -990,12 +1090,31 @@ export default {
           Array.isArray(response.data.data) && response.data.data.length > 0
             ? response.data.data[0]
             : response.data.data;
-        if (!self.selectedNode) {
+        if (!(self.selectedNode || selected)) {
           if (self.roas.length) {
             self.selectedNode = self.roas[0];
             self.getObject(self.selectedNode.filename);
           }
           self.treeData = self.getTreeData();
+        } else if (selected) {
+          //console.log("setting selectedNode in else if in doSearch");
+          self.selectedNode = self.findNodeByFilename(selected);
+          self.getObject(self.selectedNode.object.filename);
+          self.treeData = self.getTreeData();
+          if (self.selectedNode.object.objecttype === "ROA") {
+            self.roas.some((r, idx) => {
+                if (r.filename == self.selectedNode.object.filename) {
+                  self.activeTab = idx + 1 + "";
+                  self.selectedNode = self.roas[self.activeTab * 1 - 1];
+                  //self.clickTab();
+                  return true;
+                }
+            });
+          }
+        }
+        if(self.selectedNode) {
+          //console.log("calling updatePageTitle from doSearch, selectedNode:", self.selectedNode);
+          self.updatePageTitle();
         }
       }
       this.searched = search;
@@ -1039,6 +1158,12 @@ export default {
           router.push("/search/" + encodeURIComponent(this.search));
         } else {
           router.push("/");
+        }
+      } else {
+        // remove :selected from URL
+        if (this.$route.params.selected) {
+          router.push("/search/" + encodeURIComponent(this.search));
+          //this.selectedNode = null;
         }
       }
       localStorage.setItem("jdr_last_search", this.search);
@@ -1148,9 +1273,6 @@ h4 {
 }
 .avat {
   border: none;
-}
-.clickable {
-  cursor: pointer;
 }
 .container {
   font-size: 0.9rem;
