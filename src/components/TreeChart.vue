@@ -17,13 +17,24 @@
               placement="right"
               :disabled="treeData.newPubpoint === null"
             >
-              <div class="avatar" @mouseup="$emit('click-node', treeData)">
+            <div class="avatar">
+              <router-link
+                v-if="treeData.object"
+                :to="{name: 'search',
+                    params: {
+                      search: $route.params.search,
+                      selected: treeData.object.filename
+                    }
+                  }"
+                @click.prevent
+                @mouseup="$emit('click-node', treeData)">
                 <img :src="treeData.image_url" />
+              </router-link>
               </div>
             </el-tooltip>
 
             <div>
-              <div class="name" @mouseup="$emit('click-node', treeData)">
+              <div class="name">
                 <div class="name-container">
                   <el-row>
                     <el-col :span="3"
@@ -43,7 +54,22 @@
                         effect="dark"
                         :content="treeData.name"
                         placement="right"
-                        ><div v-text-middle-ellipsis="4">{{ treeData.name }}</div></el-tooltip
+                        >
+                          <router-link
+                            v-if="treeData.object"
+                            class="node-filename node-filename-cer"
+                            :to="{name: 'search',
+                                params: {
+                                  search: $route.params.search,
+                                  selected: treeData.object.filename
+                                }
+                              }"
+                            @click.prevent
+                            @mouseup="$emit('click-node', treeData)"
+                          ><div v-text-middle-ellipsis="4">{{ treeData.name }}</div>
+                          </router-link>
+                          <div v-else-if="treeData.name === 'root'" >root</div>
+                        </el-tooltip
                       ></el-col
                     >
                     <el-col :span="3"
@@ -94,7 +120,20 @@
                             effect="dark"
                             :content="mate.name"
                             placement="right"
-                            ><div v-text-middle-ellipsis="4">{{ mate.name }}</div></el-tooltip
+                            >
+                              <router-link
+                                class="node-filename"
+                                :to="{name: 'search',
+                                    params: {
+                                      search: $route.params.search,
+                                      selected: mate.object.filename
+                                    }
+                                  }"
+                                @click.prevent
+                                @mouseup="$emit('click-node', mate)"
+                              ><div v-text-middle-ellipsis="4">{{ mate.name }}</div>
+                              </router-link>
+                            </el-tooltip
                           ></el-col
                         >
                         <el-col :span="3"
@@ -354,6 +393,15 @@ td {
     border-top: 1px solid #ccc;
     z-index: 1;
   }
+}
+
+a.node-filename {
+  color: #bbb;
+  text-decoration: none;
+}
+a.node-filename-cer {
+  color: #303133;
+  text-decoration: none;
 }
 
 .landscape {
