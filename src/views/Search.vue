@@ -171,7 +171,7 @@
                               }).slice(0, 300)
                             "
                             style="width: 100%"
-                            height="220"
+                            max-height="220"
                             :show-header="false"
                             >
                               <el-table-column>
