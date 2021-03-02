@@ -1108,9 +1108,7 @@ export default {
     },
     selectNode() {
       const self = this;
-      console.log("in selectNode(), self.selected: ", self.selected);
       self.selectedNode = self.findNodeByFilename(self.selected);
-      console.log("self.selectedNode:", self.selectedNode);
       self.treeData = self.getTreeData();
       self.getObject(self.selectedNode.object.filename);
           if (self.selectedNode.object.objecttype === "ROA") {
