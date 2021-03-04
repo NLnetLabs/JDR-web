@@ -1141,27 +1141,24 @@ export default {
         if (!(self.selectedNode || selected)) {
           if (self.roas.length) {
             self.selectedNode = self.roas[0];
+            self.activeTab = "1";
             self.getObject(self.selectedNode.filename);
           }
-          self.treeData = self.getTreeData();
         } else if (selected) {
-          //console.log("setting selectedNode in else if in doSearch");
           self.selectedNode = self.findNodeByFilename(selected);
           self.getObject(self.selectedNode.object.filename);
-          self.treeData = self.getTreeData();
           if (self.selectedNode.object.objecttype === "ROA") {
             self.roas.some((r, idx) => {
                 if (r.filename == self.selectedNode.object.filename) {
                   self.activeTab = idx + 1 + "";
                   self.selectedNode = self.roas[self.activeTab * 1 - 1];
-                  //self.clickTab();
                   return true;
                 }
             });
           }
         }
+        self.treeData = self.getTreeData();
         if(self.selectedNode) {
-          //console.log("calling updatePageTitle from doSearch, selectedNode:", self.selectedNode);
           self.updatePageTitle();
         }
       }
