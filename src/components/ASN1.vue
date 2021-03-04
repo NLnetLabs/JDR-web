@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span v-if="currentObject && currentObject.data && currentObject.data.remarks_tree">
+    <span ref="remarkNav" v-if="currentObject && currentObject.data && currentObject.data.remarks_tree">
       <el-tag
         size="mini"
         type="warning"
@@ -41,7 +41,8 @@
       :props="defaultProps"
       default-expand-all
       v-if="objectTree"
-      style="max-height: 300px; overflow-y:auto"
+      style="overflow-y:auto"
+      ref="ASN1tree"
     >
       <span class="tree-node" slot-scope="{ node, data }">
         <span v-if="data.nicename"
@@ -66,13 +67,29 @@
 <script>
 export default {
   name: "ASN1",
-  props: ["currentObject", "objectTree", "defaultProps"],
+  props: ["currentObject", "objectTree", "defaultProps", "heightToMatch"],
   data() {
     return {
       currentTid: null
     };
   },
+  watch: {
+    currentObject: function() {
+      // setTimeout to 'flush the queue' of all events
+      // making sure the heightToMatch element is rendered
+      setTimeout(this.matchHeight, 0);
+    }
+  },
   methods: {
+    matchHeight() {
+        if (this.heightToMatch.$el) {
+          let h = this.heightToMatch.$el.clientHeight;
+          if (this.$refs.remarkNav) {
+            h -= this.$refs.ASN1tree.$el.offsetTop;
+          }
+          this.$refs.ASN1tree.$el.style.height = h+'px';
+        }
+    },
     jumpToTreePrev(filter) {
       if (this.currentObject && this.currentObject.data && this.currentObject.data.remarks_tree) {
         const remarks =

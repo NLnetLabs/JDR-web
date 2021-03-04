@@ -103,7 +103,7 @@
                 v-if="selectedNode.object.objecttype !== 'ROA' && selectedNode.object.object"
               >
                 <el-row>
-                  <el-col :span="12">
+                  <el-col :span="12" ref="detailLeftCol">
                     <div v-if="selectedNode.object.objecttype === 'CER'">
                       <div v-if="currentObject && currentObject.data && currentObject.data.object">
                         <el-row>
@@ -703,6 +703,7 @@
                           :currentObject="currentObject"
                           :objectTree="objectTree"
                           :defaultProps="defaultProps"
+                          :heightToMatch="this.$refs.detailLeftCol"
                         ></ASN1>
                       </el-col>
                     </el-row>
@@ -715,7 +716,7 @@
                 v-if="selectedNode.objecttype === 'ROA' && selectedNode.object"
               >
                 <el-row>
-                  <el-col :span="12">
+                  <el-col :span="12" ref="detailLeftCol">
                     <el-row>
                       <el-col :span="4">
                         ASN
@@ -773,6 +774,7 @@
                           :currentObject="currentObject"
                           :objectTree="objectTree"
                           :defaultProps="defaultProps"
+                          :heightToMatch="this.$refs.detailLeftCol"
                         ></ASN1>
                       </el-col>
                     </el-row>
@@ -975,7 +977,6 @@ export default {
     },
     clickTab() {
       this.selectedNode = this.roas[this.activeTab * 1 - 1];
-      console.log(this.selectedNode);//.object.filename);
       router.push({name: 'search', params : {
           'search': this.$route.params.search,
           'selected' : this.selectedNode.filename
