@@ -65,7 +65,7 @@
             ></el-col
           >
             </el-row>
-              <div class="name" @mouseup="$emit('click-node', treeData)">
+              <div class="name">
                 <div class="name-container">
                   <el-row>
                     <el-col :span="($route.name == 'search') ? 21 : 24"
@@ -144,22 +144,9 @@
                 :class="Array.isArray(mate.class) ? mate.class : []"
               >
                 <div>
-                  <div class="name leafname" @click="$emit('click-node', mate)">
+                  <div class="name leafname">
                     <div class="name-container">
                       <el-row>
-                      <!--
-                        <el-col :span="3"
-                          ><el-tooltip
-                            class="item"
-                            effect="dark"
-                            :content="mate.additionalInfo"
-                            placement="left"
-                            v-if="mate.additionalInfo"
-                            ><div :class="mate.additionalInfoSeverity">
-                              <i class="el-icon-discover"></i></div></el-tooltip
-                          >&nbsp;</el-col
-                        >
-                        -->
                         <el-col :span="21"
                           ><el-tooltip
                             class="item"
