@@ -67,17 +67,36 @@
         <el-tabs
           v-if="roas.length && searchType !== SEARCH_TYPES.FILENAME"
           v-model="activeTab"
-          @tab-click="clickTab"
         >
-          <el-tab-pane
-            :label="'Selected'"
-            :disabled=true
-          ></el-tab-pane>
+          <el-tab-pane :disabled=true >
+            <router-link
+              slot="label"
+              :class="['roa-tab', 'selected',
+                      this.activeTab !== '0' ? 'inactive' : '']"
+              :to="{name: 'search',
+                    params: {
+                      search: $route.params.search,
+                      selected: $route.params.selected
+                    }
+                  } "
+              @click.prevent
+            >Selected</router-link>
+          </el-tab-pane>
           <el-tab-pane
             v-for="(roa, index) in roas"
-            :key="index + 1"
-            :label="'ROA ' + (index + 1)"
-          ></el-tab-pane>
+            :key="index"
+          ><router-link
+              slot="label"
+              class="roa-tab"
+              :to="{name: 'search',
+                    params: {
+                      search: $route.params.search,
+                      selected: roa.filename
+                    }
+                  }"
+              @click.prevent
+            >ROA {{ index + 1 }}</router-link>
+          </el-tab-pane>
         </el-tabs>
 
         <el-row>
@@ -1392,5 +1411,18 @@ h4 {
 .el-tabs__item {
     height: 30px !important;
     line-height: 30px !important;
+    padding: 0 !important;
+    a {
+      padding: 0 10px;
+      text-decoration: none;
+    }
+}
+.roa-tab {
+  padding: 0 10px;
+  text-decoration: none;
+  &.selected.inactive {
+      color: grey;
+      pointer-events: none;
+  }
 }
 </style>
