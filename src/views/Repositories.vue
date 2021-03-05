@@ -57,11 +57,15 @@
                 </template></el-table-column
               >
               <el-table-column label="Type" prop="type" width="100"></el-table-column>
-              <el-table-column label="View" width="100"
-                ><template slot-scope="scope"
-                  ><a href="javascript:void(0)" @click="viewFile(scope.row)">View</a></template
-                ></el-table-column
-              >
+              <el-table-column label="View" width="100">
+                  <template slot-scope="scope">
+                      <router-link
+                          :to="{name: 'search',
+                          params: { search: scope.row.filename}}">
+                          View
+                      </router-link>
+                  </template>
+              </el-table-column>
               <el-table-column label="Message" prop="msg"></el-table-column>
             </el-table>
           </div>
