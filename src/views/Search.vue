@@ -250,39 +250,38 @@
                             height="220"
                             :show-header="false"
                           >
-                            <el-table-column label="Resource"
-                              ><template slot-scope="scope">{{
+                            <el-table-column label="Resource">
+                              <template slot-scope="scope">{{
                                 scope.row.resource
-                              }}</template></el-table-column
-                            >
-                            <el-table-column label="CERs"
-                              ><template slot-scope="scope">
+                                }}</template>
+                            </el-table-column>
+                            <el-table-column label="CERs">
+                              <template slot-scope="scope">
                                 <span v-if="scope.row.cers && scope.row.cers.length"
-                                  >CERs:
-                                  <span v-for="(r, idx) in scope.row.cers" :key="idx"
-                                    ><a
-                                      :href="'#/search/' + encodeURIComponent(r)"
-                                      @click="preventAndSearch(r, $event)"
-                                      >{{ idx + 1 }}</a
-                                    >&nbsp; </span
-                                  >
+                                >CERs:
+                                  <router-link
+                                    v-for="(r, idx) in scope.row.cers"
+                                    :key="idx"
+                                    :to="{name: 'search', 
+                                    params: { search: r }}"
+                                  >{{ idx + 1 }}
+                                  </router-link>
                                 </span>
-                              </template></el-table-column
-                            >
-                            <el-table-column label="ROAs"
-                              ><template slot-scope="scope">
+                              </template>
+                            </el-table-column>
+                            <el-table-column label="ROAs">
+                              <template slot-scope="scope">
                                 <span v-if="scope.row.roas && scope.row.roas.length"
-                                  >ROAs:
-                                  <span v-for="(r, idx) in scope.row.roas" :key="idx"
-                                    ><a
-                                      :href="'#/search/' + encodeURIComponent(r)"
-                                      @click="preventAndSearch(r, $event)"
-                                      >{{ idx + 1 }}</a
-                                    >&nbsp; </span
-                                  >
+                                >ROAs:
+                                  <router-link
+                                    v-for="(r, idx) in scope.row.roas"
+                                    :key="idx"
+                                    :to="{name: 'search', params: { search: r } }"
+                                  >{{ idx + 1 }}
+                                  </router-link>
                                 </span>
-                              </template></el-table-column
-                            >
+                              </template>
+                            </el-table-column>
                           </el-table>
                           <div
                             v-if="
@@ -1295,11 +1294,6 @@ export default {
         });
       });
       return res;
-    },
-    preventAndSearch(object, e) {
-      e.preventDefault();
-      this.search = object;
-      this.doSearch(this.search);
     }
   }
 };
