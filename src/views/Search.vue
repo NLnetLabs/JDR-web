@@ -68,20 +68,6 @@
           v-if="roas.length && searchType !== SEARCH_TYPES.FILENAME"
           v-model="activeTab"
         >
-          <el-tab-pane :disabled=true >
-            <router-link
-              slot="label"
-              :class="['roa-tab', 'selected',
-                      this.activeTab !== '0' ? 'inactive' : '']"
-              :to="{name: 'search',
-                    params: {
-                      search: $route.params.search,
-                      selected: $route.params.selected
-                    }
-                  } "
-              @click.prevent
-            >Selected</router-link>
-          </el-tab-pane>
           <el-tab-pane
             v-for="(roa, index) in roas"
             :key="index"
@@ -96,6 +82,20 @@
                   }"
               @click.prevent
             >ROA {{ index + 1 }}</router-link>
+          </el-tab-pane>
+          <el-tab-pane :disabled=true >
+            <router-link
+              slot="label"
+              :class="['roa-tab', 'selected',
+                      this.activeTab !== this.roas.length+'' ? 'inactive' : '']"
+              :to="{name: 'search',
+                    params: {
+                      search: $route.params.search,
+                      selected: $route.params.selected
+                    }
+                  } "
+              @click.prevent
+            >Selected node</router-link>
           </el-tab-pane>
         </el-tabs>
 
@@ -205,7 +205,10 @@
                           />
                           <el-table
                             size="small"
-                            v-if="containsASNs() && !inheritsASNs()"
+                            v-if="currentObject &&
+                            currentObject.data.object &&
+                            currentObject.data.object.ASNs &&
+                            containsASNs() && !inheritsASNs()"
                             :data="currentObject.data.object.ASNs
                               .filter( a => {
                                 if (!ASNSearch) {
@@ -853,7 +856,7 @@ export default {
       searched: "",
       error: "",
       selectedNode: null,
-      activeTab: "0",
+      activeTab: "1",
       currentObject: {},
       defaultProps: {
         children: "children",
@@ -1017,7 +1020,7 @@ export default {
       this.isPanning = false;
     },
     clickTab() {
-      this.selectedNode = this.roas[this.activeTab * 1 - 1];
+      this.selectedNode = this.roas[this.activeTab * 1 ];
       router.push({name: 'search', params : {
           'search': this.$route.params.search,
           'selected' : this.selectedNode.filename
@@ -1156,14 +1159,13 @@ export default {
           if (self.selectedNode.object.objecttype === "ROA") {
             self.roas.some((r, idx) => {
                 if (r.filename == self.selectedNode.object.filename) {
-                  self.activeTab = idx + 1 + "";
-                  self.selectedNode = self.roas[self.activeTab * 1 - 1];
-                  //self.clickTab();
+                  self.activeTab = idx + "";
+                  self.selectedNode = self.roas[self.activeTab * 1 ];
                   return true;
                 }
             });
           } else {
-            self.activeTab = "0";
+            self.activeTab = self.roas.length + "";
           }
     },
     doSearch(search, forceFilename = false, selected = undefined) {
@@ -1182,7 +1184,7 @@ export default {
         if (!(self.selectedNode || selected)) {
           if (self.roas.length) {
             self.selectedNode = self.roas[0];
-            self.activeTab = "1";
+            self.activeTab = "0";
             self.getObject(self.selectedNode.filename);
           }
         } else if (selected) {
@@ -1191,11 +1193,13 @@ export default {
           if (self.selectedNode.object.objecttype === "ROA") {
             self.roas.some((r, idx) => {
                 if (r.filename == self.selectedNode.object.filename) {
-                  self.activeTab = idx + 1 + "";
-                  self.selectedNode = self.roas[self.activeTab * 1 - 1];
+                  self.activeTab = idx + "";
+                  self.selectedNode = self.roas[self.activeTab * 1 ];
                   return true;
                 }
             });
+          } else {
+            self.activeTab = self.roas.length + "";
           }
         }
         self.treeData = self.getTreeData();
@@ -1466,6 +1470,7 @@ h4 {
   &.selected.inactive {
       color: grey;
       pointer-events: none;
+      visibility: hidden;
   }
 }
 .inheritance {
