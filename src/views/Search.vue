@@ -205,7 +205,7 @@
                           />
                           <el-table
                             size="small"
-                            v-if="currentObject &&
+                            v-if="currentObject && currentObject.data &&
                             currentObject.data.object &&
                             currentObject.data.object.ASNs &&
                             containsASNs() && !inheritsASNs()"
