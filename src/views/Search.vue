@@ -148,28 +148,48 @@
                           </el-col>
                         </el-row>
                       </div>
-                      <el-row>
+                      <el-row class="inheritance">
                         <el-col :span="4">
-                          Inherit ASNs
+                          Resources
                         </el-col>
-                        <el-col :span="20">
-                          {{ selectedNode.object.object.inherit_ASNs }}
+                        <el-col :span="3">
+                          <el-tooltip
+                            :content="inheritanceTooltip(selectedNode.object.object.inherit_v6_prefixes)"
+                            placement="top"
+                          >
+                            <span
+                              :class="(selectedNode.object.object.inherit_v6_prefixes === null) ? 'not-on-cer' : ''">
+                              <i :class="inheritanceIcon(
+                                selectedNode.object.object.inherit_v6_prefixes)
+                                "></i>
+                              IPv6</span>
+                          </el-tooltip>
                         </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col :span="4">
-                          Inherit v4 Prefixes
+                        <el-col :span="3">
+                          <el-tooltip
+                            :content="inheritanceTooltip(selectedNode.object.object.inherit_v4_prefixes)"
+                            placement="top"
+                          >
+                            <span
+                              :class="(selectedNode.object.object.inherit_v4_prefixes === null) ? 'not-on-cer' : ''">
+                              <i :class="inheritanceIcon(
+                                selectedNode.object.object.inherit_v4_prefixes)
+                                "></i>
+                              IPv4</span>
+                          </el-tooltip>
                         </el-col>
-                        <el-col :span="20">
-                          {{ selectedNode.object.object.inherit_v4_prefixes }}
-                        </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col :span="4">
-                          Inherit v6 Prefixes
-                        </el-col>
-                        <el-col :span="20">
-                          {{ selectedNode.object.object.inherit_v6_prefixes }}
+                        <el-col :span="3">
+                          <el-tooltip
+                            :content="inheritanceTooltip(selectedNode.object.object.inherit_ASNs)"
+                            placement="top"
+                          >
+                            <span
+                              :class="(containsASNs()) ? '' : 'not-on-cer'">
+                              <i :class="inheritanceIcon(
+                                selectedNode.object.object.inherit_ASNs)
+                                "></i>
+                              ASNs</span>
+                          </el-tooltip>
                         </el-col>
                       </el-row>
                       <el-row>
@@ -178,13 +198,14 @@
                         </el-col>
                         <el-col :span="20">
                           <el-input
+                            :disabled="!containsASNs() || inheritsASNs()"
                             v-model="ASNSearch"
                             size="mini"
                             placeholder="Search ASNs..."
                           />
                           <el-table
                             size="small"
-                            v-if="currentObject.data && currentObject.data.object.ASNs"
+                            v-if="containsASNs() && !inheritsASNs()"
                             :data="currentObject.data.object.ASNs
                               .filter( a => {
                                 if (!ASNSearch) {
@@ -218,13 +239,13 @@
                         v-if="currentObject && currentObject.data && currentObject.data.object"
                       >
                         <el-col :span="4" class="table-label">
-                          Resources
+                          Prefixes
                         </el-col>
                         <el-col :span="20">
                           <el-input
                             v-model="resourcesSearch"
                             size="mini"
-                            placeholder="Search resources..."
+                            placeholder="Search prefixes..."
                           />
                           <el-table
                             size="small"
@@ -262,6 +283,7 @@
                                   <router-link
                                     v-for="(r, idx) in scope.row.cers"
                                     :key="idx"
+                                    class="resourceLink"
                                     :to="{name: 'search', 
                                     params: { search: r }}"
                                   >{{ idx + 1 }}
@@ -276,6 +298,7 @@
                                   <router-link
                                     v-for="(r, idx) in scope.row.roas"
                                     :key="idx"
+                                    class="resourceLink"
                                     :to="{name: 'search', params: { search: r } }"
                                   >{{ idx + 1 }}
                                   </router-link>
@@ -1294,6 +1317,32 @@ export default {
         });
       });
       return res;
+    },
+    containsASNs() {
+      return this.currentObject &&
+        this.currentObject.data &&
+        this.currentObject.data.object.inherit_ASNs !== null;
+    },
+    inheritsASNs() {
+      return this.containsASNs() && this.currentObject.data.object.inherit_ASNs;
+    },
+    inheritanceIcon(i) {
+      if (i === null) {
+        return "el-icon-remove"
+      } else if (i) {
+        return "el-icon-bottom-right"
+      } else {
+        return "el-icon-check"
+      }
+    },
+    inheritanceTooltip(i) {
+      if (i === null) {
+        return "Not on this certificate"
+      } else if (i) {
+        return "Inherited from parent certificate"
+      } else {
+        return "Present on this certificate"
+      }
     }
   }
 };
@@ -1418,5 +1467,13 @@ h4 {
       color: grey;
       pointer-events: none;
   }
+}
+.inheritance {
+  .not-on-cer {
+    color: #bbb;
+  }
+}
+.resourceLink {
+  margin: 0.1em;
 }
 </style>
