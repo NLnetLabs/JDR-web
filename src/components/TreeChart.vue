@@ -77,7 +77,11 @@
                         >
                           <router-link
                             v-if="treeData.object"
-                            class="node-filename node-filename-cer"
+                            :class="[
+                              'node-filename',
+                              'node-filename-cer',
+                              treeData.name == selectedNode.name ? 'selected-file' : ''
+                              ]"
                             :to="{name: 'search',
                                 params: {
                                   search: $route.name == 'search' ?
@@ -155,7 +159,10 @@
                             placement="right"
                             >
                               <router-link
-                                class="node-filename"
+                                :class="[
+                                  'node-filename',
+                                  mate.name == selectedNode.name ? 'selected-file' : ''
+                                  ]"
                                 :to="{name: 'search',
                                     params: {
                                       search: $route.params.search,
@@ -434,6 +441,10 @@ a.node-filename {
 a.node-filename-cer {
   color: #303133;
   text-decoration: none;
+}
+a.selected-file {
+  color: #303133;
+  font-weight: bold;
 }
 
 .landscape {
