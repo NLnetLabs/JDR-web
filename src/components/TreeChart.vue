@@ -80,7 +80,7 @@
                             :class="[
                               'node-filename',
                               'node-filename-cer',
-                              treeData.name == selectedNode.name ? 'selected-file' : ''
+                              selectedNode && treeData.name == selectedNode.name ? 'selected-file' : ''
                               ]"
                             :to="{name: 'search',
                                 params: {
