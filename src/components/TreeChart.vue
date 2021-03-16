@@ -68,7 +68,8 @@
               <div class="name">
                 <div class="name-container">
                   <el-row>
-                    <el-col :span="($route.name == 'search') ? 21 : 24"
+                    <el-col :span="($route.name == 'search') ? 20 : 24"
+                      :push="($route.name == 'search') ? 2 : 0"
                       ><el-tooltip
                         class="item"
                         effect="dark"
@@ -151,7 +152,7 @@
                   <div class="name leafname">
                     <div class="name-container">
                       <el-row>
-                        <el-col :span="21"
+                        <el-col :span="20" :push="2"
                           ><el-tooltip
                             class="item"
                             effect="dark"
